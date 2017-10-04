@@ -22,11 +22,11 @@ set of functions
 - seq           > sequential scan using one code-set with increasing the timing to find the right range.
 - rf433         > control wrapper rf433
 COMMANDS [on/off]
-* IP/conrtol/rf433/light/on
-* IP/conrtol/rf433/dimlight/on
-* IP/conrtol/rf433/coffee/on
-* IP/conrtol/rf433/heater/on
-* IP/conrtol/rf433/all/on
+  * IP/conrtol/rf433/light/on
+  * IP/conrtol/rf433/dimlight/on
+  * IP/conrtol/rf433/coffee/on
+  * IP/conrtol/rf433/heater/on
+  * IP/conrtol/rf433/all/on
 
 
 

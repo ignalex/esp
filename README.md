@@ -19,9 +19,15 @@ set of functions
 - are_you_alive > seding reply 'I am alive' > for pinging
 - cpu_freq      > change 80 / 160
 - deep_sleep    > send ESP to deep sleep for N seconds
-- rf433         > control wrapper rf433
-- _rf433        > executor for rf433
 - seq           > sequential scan using one code-set with increasing the timing to find the right range.
+- rf433         > control wrapper rf433
+COMMANDS [on/off]
+*IP/conrtol/rf433/light/on
+*IP/conrtol/rf433/dimlight/on
+*IP/conrtol/rf433/coffee/on
+*IP/conrtol/rf433/heater/on
+*IP/conrtol/rf433/all/on
+
 
 
 ## upload.txt

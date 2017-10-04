@@ -92,9 +92,21 @@ def rf433(value):
     elif value[0] == 'coffee':
         res = [_rf433([11,com])]
     elif value[0] == 'all':
-        res = [_rf433([v,com]) for v in [1,2,3,4,11,12,21]]
+        res = [_rf433([v,com]) for v in [5,11,12,21]]
+    elif value[0] == 'dimlight':
+        # for Philips lamps > ['dimlight', 0] for DIM  / ['dimlight', 1] for BRIGHT
+        res = []
+        if com == 0:  # bright to dim
+            res.append(_rf433([5,0])); sleep (0.5)
+            res.append(_rf433([5,1])); sleep (0.5) # now mode 2
+            res.append(_rf433([5,0])); sleep (0.5)
+            res.append(_rf433([5,1])); sleep (0.5) # now mode 3 (dim)
+        else:
+            res.append(_rf433([5,0])); sleep (0.5)
+            res.append(_rf433([5,1])); sleep (0.5) # now mode 1
     else:
         res = [_rf433([value[0],com])]
+
     ret= str(value[0]) +'<br>' + '<br>'.join(res)
     return ret
 

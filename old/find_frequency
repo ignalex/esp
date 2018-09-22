@@ -1,0 +1,16 @@
+# was used for finding 433 frequency.
+
+#def seq(start, stop, step=1):
+#    n = int(round((stop - start)/float(step)))
+#    if n > 1:
+#        return([start + step*i for i in range(n+1)])
+#    else:
+#        return([])
+#
+#def rf433_loop(start, end, step,  pause = 1, rng = 6):
+#    for a in seq(start, end, step):
+#        for n in range(0,rng):
+#            rf433([a,n])
+#            sleep(pause)
+#
+

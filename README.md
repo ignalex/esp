@@ -13,7 +13,7 @@ set of functions
 - blink
 - get_data
 
-## http_control1
+## http_control
 - control       > generic func
 - pin           > trigger pin ON / OFF
 - are_you_alive > seding reply 'I am alive' > for pinging
@@ -38,3 +38,6 @@ syntax to upload file from CMD
 
 ## star_wars
 * socket example
+
+#TODO:
+- [ ] if wifi failed > indicate

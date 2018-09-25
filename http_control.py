@@ -1,15 +1,7 @@
 """ESP http api
-current PINS allocation
-14 - rf433
-15 - beep
-2 - internal LED (blue) : set 1 on connect
-adc - analog 1-1024 / 0-3.3v (on current board ! be careful with OLDs 0-1v)
-16 (D0) - LED RED #TODO: to change - D0 needed for self waking up
-5 (D1) -  LED BLUE
-4 (D1) -  LED GREEN
 
-#TODO: motor shield used D1 D2 D3 D4
-#TODO: waking up uses D0
+adc - analog 1-1024 / 0-3.3v (on current board ! be careful with OLDs 0-1v)
+
 """
 #DONE: GIT
 #TODO: split modules, import only needed / memory
@@ -22,15 +14,15 @@ from machine import ADC
 adc = ADC(0)
 
 from time import sleep
+import json
 
-html = b"""HTTP/1.1 200 OK
-Content-Type: text/html
+# defining PINS
+from pins import RED, BLUE, GREEN, INTERNAL_LED, RF433, BEEP
 
-<!DOCTYPE html>
-<html>
-    <head> <title>ESP</title> </head>
-    <body>%s</body>
-</html>
+html = """HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+%s
 """
 
 
@@ -42,25 +34,26 @@ s.listen(1)
 
 print('listening on', addr)
 
-
+#TODO:
+# machine.reset()
+# machine.unique_id()
 
 def control(line):
-    reply = []
     try:
         line = line.replace('\\r\\n','').replace(' HTTP','')
         if line.find('control') != -1 or line.find('gpio') != -1: # gpio > compatibility
             print ('control function')
-            reply.append('control function\n')
             params = [i for i in line.replace('control','').replace('gpio','').split('/') if i not in ["b'GET ",'',"1.1'"]]
             print (params)
             func, values = params[0], params[1:]
             if func in globals():
-                reply.append( globals()[func](values))
+                return (func, globals()[func](values)) # here can actually return dict which will be jsonified
             else:
-                reply.append('no func '+str(func)+' registered')
+                return (func, 'no funcion registered')
+        else:
+            return (None,None)
     except Exception as e:
-        reply.append(e)
-    return '\n'.join(reply)
+        return ('error', str(e))
 
 def gpio(value):
     "compatibility"
@@ -71,28 +64,28 @@ def pin(value):
     print ('values recieved ' + str(value))
     try:
         p = Pin(int(value[0]), Pin.OUT)
-        if value[1] == '1': p.low()
-        if value[1] == '0': p.high()
+        if str(value[1]) == '1': p.low()
+        if str(value[1]) == '0': p.high()
         return 'OK - ' + str(value)
     except:
         return 'ERROR'
 
 def beep(value):
-    "15 pin is a beeper / reverced 1-0"
+    "beeper / reverced 1-0"
     if value[0] == '1':
-        pin(['15','0'])
+        pin([BEEP,'0'])
     if value[0] == '0':
-        pin(['15','1'])
+        pin([BEEP,'1'])
     return 'beeper set to ' + str(value[0])
 
 def sensor(value):
     try:
         current = previous_color
-        color(['magneta',''])
+        color(['red',''])
         if len(value)>=1:
             if value[0] == 'sound':
                 beep('1')
-        r = 'adc='+str(adc.read())
+        r = str(adc.read())
         if len(value)>=1:
             if value[0] == 'sound':
                 beep('0')
@@ -106,14 +99,14 @@ def sensor(value):
 # color
 previous_color = 'off'
 def color(value):
-    "using pins D0 (16), D1 (5), D2 (4), control RGB (respectively)"
+    "pins defined in file pins"
     global previous_color
     requested = value[0].lower() #syntax /control/color/red
-    colors = {'off' : [0,0,0], 'white' : [1,1,1],
-              'red' : [1,0,0], 'green' : [0,1,0], 'blue' : [0,0,1],
-              'yellow' :[1,1,0], 'cyan' : [0,1,1], 'magneta' : [1,0,1]
+    colors = {'off'    : [0,0,0],   'white' : [1,1,1],
+              'red'    : [1,0,0],   'green' : [0,1,0], 'blue' :     [0,0,1],
+              'yellow' :[1,1,0],    'cyan'  : [0,1,1], 'magneta' :  [1,0,1]
               }
-    pins = {0:16, 1:5, 2:4}
+    pins = {0:RED, 1:BLUE, 2:GREEN}
     try:
         for col, setting in enumerate(colors[requested]):
             pin([pins[col], str(setting)])
@@ -185,7 +178,7 @@ def _rf433(value):
     """[signal, OnOff]
     : 150 - 300 delay good, pin 14 (D5), 5V """
     print ('_rf433' + str(value))
-    pin = 14 #int(value[1])
+    pin = RF433 #int(value[1])
     timeDelay = 200 / 1000000 #float(value[0])/1000000
     signal = value[0]
     OnOff  = int(value[1])
@@ -259,20 +252,31 @@ def _rf433(value):
         print (e)
         return str(e)
 
-
 #%% RUN
-pin(['2','1']) # indicating on
+try:
+    from motor import motor
+except Exception as e:
+    print (str(e), file=open('log','w'))
 
-cnt = []
+pin([INTERNAL_LED,'1']) # indicating on
+
+cnt = {}
+message = {}
 while True:
     cl, addr = s.accept()
     print('client connected from', addr)
+    message['from IP'] = str(addr)
     cl_file = cl.makefile('rwb', 0)
     while True:
         line = cl_file.readline()
-        if not line or line == b'\r\n': break
-        cnt.append( control(str(line)) )
-    response = html % '\n'.join([i for i in cnt if i is not None]).replace('\n','<br>')
-    cl.send(response)
+#        print (line)
+        if not line or line == b'\r\n':
+            break
+        if line.find(b'Host:')!=-1: message['host'] = str(line).replace('\\r\\n','')
+        func, reply = control(str(line))
+        if func is not None:
+            cnt[func] = reply
+    cl.sendall(html % json.dumps({'data':cnt, 'message' : message}))
     cl.close()
-    cnt = []
+    cnt = {}
+    message = {}

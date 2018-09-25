@@ -19,20 +19,3 @@ def do_connect(IP, essid, password  ):
  print(" can NOT connect to network")
 
 
-
-def blink(on = 0.2, off = 0.2):
- from time import sleep
- from machine import Pin
- p = Pin(2, Pin.OUT)
- while True:  p.low(); sleep(on); p.high(); sleep(off)
-
-
-def get_data(URL, ENTITY, API_PASSWORD):
-    'request data from url'
-    import urequests
-    url = '{}{}'.format(URL, ENTITY)
-    headers = {'x-ha-access': API_PASSWORD,
-               'content-type': 'application/json'}
-    resp = urequests.get(url, headers=headers)
-    return resp.json()['state']
-

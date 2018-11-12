@@ -5,12 +5,14 @@ adc - analog 1-1024 / 0-3.3v (on current board ! be careful with OLDs 0-1v)
 """
 #DONE: GIT
 #TODO: split modules, import only needed / memory
-#TODO: return json or smth like that
-#TODO: external list of pins.
+#DONE: return json or smth like that
+#DONE: external list of pins.
+#DONE: machine.reset()
+#DONE: machine.unique_id()
+#DONE: return state of RF elements
 
 
-from  machine import Pin
-from machine import ADC
+from  machine import Pin, unique_id, reset, ADC
 adc = ADC(0)
 
 from time import sleep
@@ -18,6 +20,7 @@ import json
 
 # defining PINS
 from pins import RED, BLUE, GREEN, INTERNAL_LED, RF433, BEEP
+
 
 html = """HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
@@ -29,14 +32,12 @@ Content-Type: application/json; charset=utf-8
 import socket
 addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
 s = socket.socket()
+#s.settimeout(None)
 s.bind(addr)
-s.listen(1)
+s.listen(10) # was 4
 
 print('listening on', addr)
 
-#TODO:
-# machine.reset()
-# machine.unique_id()
 
 def control(line):
     try:
@@ -55,6 +56,9 @@ def control(line):
     except Exception as e:
         return ('error', str(e))
 
+def id_yourself(value=''):
+    return unique_id()
+
 def gpio(value):
     "compatibility"
     return pin(value)
@@ -64,37 +68,34 @@ def pin(value):
     print ('values recieved ' + str(value))
     try:
         p = Pin(int(value[0]), Pin.OUT)
-        if str(value[1]) == '1': p.low()
-        if str(value[1]) == '0': p.high()
+        p.value( int( not int(value[1]) ) ) # reverced logic
+#        if str(value[1]) == '1': p.low()
+#        if str(value[1]) == '0': p.high()
         return 'OK - ' + str(value)
     except:
         return 'ERROR'
 
 def beep(value):
     "beeper / reverced 1-0"
-    if value[0] == '1':
-        pin([BEEP,'0'])
-    if value[0] == '0':
-        pin([BEEP,'1'])
-    return 'beeper set to ' + str(value[0])
+    r = pin(BEEP, int(not int(value[0])))
+    return 'beeper set to ' + r
+#
+def sensor(value=''):
+    return  str(adc.read())
 
-def sensor(value):
-    try:
-        current = previous_color
-        color(['red',''])
-        if len(value)>=1:
-            if value[0] == 'sound':
-                beep('1')
-        r = str(adc.read())
-        if len(value)>=1:
-            if value[0] == 'sound':
-                beep('0')
-        color([current,''])
-
-        return (r)
-    except Exception as e:
-        print (e)
-        return str(e)
+#def sensor_sound(value): #!!!: something wrong with this!
+#    "with a beep and color"
+#    try:
+#        current = previous_color
+#        color(['red',''])
+#        beep('1')
+#        s = sensor(value)
+#        color([current,''])
+#        beep('0')
+#        return (s)
+#    except Exception as e:
+#        print (str(e))
+#        return str(e)
 
 # color
 previous_color = 'off'
@@ -118,6 +119,11 @@ def color(value):
 
 def are_you_alive(value):
     return 'I am alive'
+
+def reset_yourself(value):
+    'reset machine'
+    print ('resetting')
+    reset()
 
 def cpu_freq(value = ['80']):
     "80 or 160"
@@ -143,14 +149,28 @@ def deep_sleep(value = ['10']):
         return str(e)
 
 #%% rf433
+
+#reseting 14 pin > othersiwe it is jamming 433MHz
+p = Pin(RF433 , Pin.OUT)
+p.low()
+
+RF_positions = {} #global > will be updated on 1st request
+
+def rf_states(value):
+    "call for latest states"
+    global RF_positions
+    return RF_positions
+
 def rf433(value):
     """wrapper for _rf433
     [group,what]
+    returns [{type:[status::bool, message::str}]
     """
+    global RF_positions
     print ('rf warapper: value: ' + str(value))
     com = [1 if value[1] in [1, '1','on','ON','True','true'] else 0][0]
     if value[0] == 'light':
-        res = [_rf433([5,com]) ] # old > [_rf433([v,com]) for v in [1,2,3,4]]
+        res = [_rf433([5,com]) ]
     elif value[0] == 'heater':
         res = [_rf433([12,com])]
     elif value[0] == 'coffee':
@@ -170,9 +190,9 @@ def rf433(value):
             res.append(_rf433([5,1])); sleep (0.5) # now mode 1
     else:
         res = [_rf433([value[0],com])]
-
-    ret= str(value[0]) +'<br>' + '<br>'.join(res)
-    return ret
+    RF_positions[value[0]] = com
+#    ret= str(value[0]) +'<br>' + '<br>'.join(res)
+    return [RF_positions, res] # updating current state > will be [1/0,'string message']
 
 def _rf433(value):
     """[signal, OnOff]
@@ -249,34 +269,43 @@ def _rf433(value):
         color([current,''])
         return str('signal {} sent to {}'.format(OnOff,signal))
     except Exception as e:
-        print (e)
+        print (str(e))
         return str(e)
 
 #%% RUN
 try:
     from motor import motor
 except Exception as e:
-    print (str(e), file=open('log','w'))
+    print (str(e), file=open('log','a'))
 
-pin([INTERNAL_LED,'1']) # indicating on
+pin([INTERNAL_LED,1]) # indicating on
+
 
 cnt = {}
 message = {}
 while True:
-    cl, addr = s.accept()
-    print('client connected from', addr)
-    message['from IP'] = str(addr)
-    cl_file = cl.makefile('rwb', 0)
-    while True:
-        line = cl_file.readline()
-#        print (line)
-        if not line or line == b'\r\n':
-            break
-        if line.find(b'Host:')!=-1: message['host'] = str(line).replace('\\r\\n','')
-        func, reply = control(str(line))
-        if func is not None:
-            cnt[func] = reply
-    cl.sendall(html % json.dumps({'data':cnt, 'message' : message}))
-    cl.close()
-    cnt = {}
-    message = {}
+#    try:
+        cl, addr = s.accept()
+        print('client connected from', addr)
+        message['from IP'] = str(addr)
+        cl_file = cl.makefile('rwb', 0)
+        while True:
+            line = cl_file.readline()
+            if not line or line == b'\r\n':
+                break
+            if line.find(b'Host:')!=-1: message['host'] = str(line).replace('\\r\\n','')
+            func, reply = control(str(line))
+            if func is not None:
+                cnt[func] = reply
+        cl.sendall(html % json.dumps({'id': id_yourself(), 'data':cnt, 'message' : message}))
+        cl.close()
+        cnt = {}
+        message = {}
+#    except Exception as e:
+#        try:
+#            cl.close()
+#            cnt = {}
+#            message = {}
+#        except:
+#            pass
+#        print (str(e))

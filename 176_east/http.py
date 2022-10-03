@@ -1,5 +1,3 @@
-#dont call it http 
-
 import socket
 import json
 

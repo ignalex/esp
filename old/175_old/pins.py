@@ -14,19 +14,15 @@ RED =           16     # 16 (D0) - LED RED     !!!: conflict D0- waking up
 BLUE =          5      # 5 (D1) -  LED BLUE    !!!: conflict
 GREEN =         4      # 4 (D2) -  LED GREEN   !!!: conflict
 
-# MOTOR NEMA
+# MOTOR
 # PIN_ENABLE =    0      # D3
 # PIN_STEP =      12     # D6
 # PIN_DIRECTION = 13     # D7
 # HCSR_TRIGGER =     5      # D1                     !!!: conflict
 # HCSR_SENSOR = 4   # D2                     !!!: conflict
 
-#MOTOR SHIELD
-MOTOR_PINS = [5,0,4,2]  # D1, D2, D3, D4
-
 INTERNAL_LED =  2      # (D4) internal LED (blue) : set 1 on connect
 RF433 =         14     # (D5) - rf433
 BEEP =          15      # 15 - (D8)- beep
 
-RAID_RELAY =    14      # 14 - (D5)- rd433 + Relay
 DHT = 12 #D6

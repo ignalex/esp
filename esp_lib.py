@@ -24,7 +24,7 @@ def do_connect(IP, essid, password):
  print(" can NOT connect to network")
 
 
-def do_connect_with_display(IP, essid, password, led = None, display=None, fill=False):
+def do_connect_with_display(IP, essid, password, led = None, display=None, fill=False, attmpts = 40, id = ''):
     "connect, report OLED (display) + LED (pin)"
     sta_if = network.WLAN(network.STA_IF)
     sta_if.active(False)
@@ -32,14 +32,14 @@ def do_connect_with_display(IP, essid, password, led = None, display=None, fill=
     if display is not None:
         if fill:
             display.fill(0) # clean
-        display.text(essid, 0, 10, 1)
+        display.text(id + essid, 0, 10, 1)
         display.show()
     sta_if.active(True)
     if IP is not None: # None - get IP from router
         sta_if.ifconfig(IP)
     sta_if.connect(essid, password)
     if led is not None: led.on()
-    for a in range(0,10):
+    for a in range(0,attmpts):
         print ('.', end = '')
         if display is not None:
             display.text('.', a * 4, 20, 1)
@@ -59,10 +59,11 @@ def do_connect_with_display(IP, essid, password, led = None, display=None, fill=
         display.show()
     return False
 
-def failback():
+def failback(IP, essid, password):
     "min wifi"
     import network
     wlan = network.WLAN(network.STA_IF)
+    print ('failback wifi')
     wlan.active(True)
-    wlan.connect('WFA-4', 'impervious589') # connect to an AP
-    wlan.ifconfig(('192.168.1.101', '255.255.255.0', '192.168.1.1', '8.8.8.8'))
+    wlan.connect(essid, password) # connect to an AP
+    wlan.ifconfig((IP, '255.255.255.0', '192.168.1.1', '8.8.8.8'))

@@ -22,9 +22,7 @@ rgb = RGB_LED('red') # ready to connect
 d = oled_spi(pins.OLED_MOSI, pins.OLED_DATA, pins.OLED_RESET, None, pins.OLED_SCK, intro=config.INTRO, rotate = config.ROTATE)
 
 # wifi
-wifi = wifi_connect(networks = secrets.networks, d = d, led = led, attmpts = config.WIFI_ATTEMPTS)
-
-if wifi:
+if  wifi_connect(networks = secrets.networks, d = d, led = led, attmpts = config.WIFI_ATTEMPTS):
     rgb.color('blue') # connected
     sleep(0.5)
 else:

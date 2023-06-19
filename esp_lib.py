@@ -67,3 +67,39 @@ def failback(IP, essid, password):
     wlan.active(True)
     wlan.ifconfig(IP)
     wlan.connect(essid, password) # connect to an AP
+    return wlan.isconnected()
+
+def wifi_connect(networks, d = None, led = None, attmpts = 40):
+    "connect to N networks from secrets.py"
+    try:
+        for i, n in enumerate(networks):
+            wifi = do_connect_with_display(IP = n['IP'], essid = n['ESSID'], password = n['PASSWORD'],
+                                           led = led,
+                                           display = d,
+                                           fill = False if i == 0 else True,
+                                           attmpts = attmpts,
+                                           id = f'({i+1}) ' )
+            if wifi: return True
+        # no wifi
+        try:
+            d.text('no wifi available', 0, 40, 1)
+            d.show()
+            sleep(1)
+        except: pass
+        try:
+            return failback(IP = networks[0]['IP'],  essid = networks[0]['ESSID'], password = networks[0]['PASSWORD'])
+        except:
+            return False
+
+    except Exception as e:
+        try:
+            print(str(e), file=open('log', 'a'))
+            d.text('wifi error', 0, 40, 1)
+            d.show()
+            sleep(5)
+        except:
+            pass
+        try:
+            return failback(IP = networks[0]['IP'],  essid = networks[0]['ESSID'], password = networks[0]['PASSWORD'])
+        except:
+            return False

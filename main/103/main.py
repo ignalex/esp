@@ -1,78 +1,58 @@
-SLEEP = 1
-INTRO = 'HELLO ALEX :)'
-SKIP_LOOPS = 30 
+# main for 103
 
-from esp_lib import do_connect_with_display, failback
+from esp_lib import wifi_connect #do_connect_with_display, failback
 from time import sleep
 from machine import reset
 import secrets
 from oled import oled_spi
-import pins
+import pins, config
 from temp_ds18b20 import DS18X20
 from common import TIME
 from rgb_led import RGB_LED
 import gc
 
+# GC
 gc.enable()
+gc_total = gc.mem_alloc() + gc.mem_free()
 
-# onboard LED
 led = None #Pin(pins.LED, Pin.OUT)
-rgb = RGB_LED('red')
+rgb = RGB_LED('red') # ready to connect
 
-# d.invert(1)
+# display
+d = oled_spi(pins.OLED_MOSI, pins.OLED_DATA, pins.OLED_RESET, None, pins.OLED_SCK, intro=config.INTRO, rotate = config.ROTATE)
 
-try:
-    # display OLED
-    d = oled_spi(pins.OLED_MOSI, pins.OLED_DATA, pins.OLED_RESET, None, pins.OLED_SCK, intro=INTRO, rotate = 0)
-    # attempt 1
-    wifi = do_connect_with_display(IP = secrets.IP1, essid = secrets.ESSID1, password = secrets.PASSWORD1, led = led, display = d, fill=False, attmpts = 40, id = '(1) ')
+# wifi
+wifi = wifi_connect(networks = secrets.networks, d = d, led = led, attmpts = config.WIFI_ATTEMPTS)
 
-    # attempt 2
-    if not wifi:
-        wifi = do_connect_with_display(IP = secrets.IP2, essid = secrets.ESSID2, password = secrets.PASSWORD2, led = led, display = d, fill=True, attmpts = 40, id = '(2) ')
+if wifi:
+    rgb.color('blue') # connected
+    sleep(0.5)
+else:
+    for x in range(5):
+        rgb.color('red'); sleep(1)
+        rgb.color('white'); sleep(1)
 
-    # no wifi
-    if not wifi:
-        d.text('no wifi available', 0, 40, 1)
-        d.show()
-        sleep(2)
-        failback(IP = secrets.IP1, essid = secrets.ESSID1, password = secrets.PASSWORD1)
-        
-except Exception as e:
-    try: 
-        print(str(e), file=open('log', 'a'))
-    except: pass 
-    try: 
-        d.text('wifi error', 0, 40, 1)
-        d.show()
-        sleep(2)
-    except: 
-        pass 
-    failback(IP = secrets.IP1, essid = secrets.ESSID1, password = secrets.PASSWORD1)
+# temperature
+temp = DS18X20(pin=pins.TEMPERATURE, skip_loops=config.SKIP_LOOPS)
 
-rgb.color('blue')
-sleep(0.5)
-if d is not None: d.fill(0); d.show()
-
-# temp 
-temp = DS18X20(pin=pins.TEMPERATURE, skip_loops=SKIP_LOOPS)
-
+# time
 tm = TIME()
 
+# ready
 rgb.color('off')
-total = gc.mem_alloc() + gc.mem_free() 
+if d is not None: d.fill(0); d.show()
 
 # FOR NOW
-while True: 
+while True:
     d.fill(0)
     tmp, tmp_measured = temp.api_skipped()
     d.text('temp ' + str(tmp), 0, 10, 1)
-    if tmp_measured: 
+    if tmp_measured:
         rgb.color('blue' if tmp != 0 else 'red')
     d.text('time ' + tm.string(), 0, 20, 1)
     _g =  gc.mem_free()
-    d.fill_rect(0, 60, int(_g * 128 / total) % 128, 5, 1) 
-    print('RAM ' + str(int(_g/1024)) + ' of ' + str(int(total/1024))  + ', temp = ' + str(tmp) + (' * ' if tmp_measured else ''))
+    d.fill_rect(0, 60, int(_g * 128 / gc_total) % 128, 5, 1)
+    print('RAM ' + str(int(_g/1024)) + ' of ' + str(int(gc_total/1024))  + ', temp = ' + str(tmp) + (' * ' if tmp_measured else ''))
     d.show()
     rgb.color('off')
-    sleep(SLEEP - (0.75 if tmp_measured else 0))
+    sleep(config.SLEEP - (0.75 if tmp_measured else 0))

@@ -65,5 +65,5 @@ def failback(IP, essid, password):
     wlan = network.WLAN(network.STA_IF)
     print ('failback wifi')
     wlan.active(True)
+    wlan.ifconfig(IP)
     wlan.connect(essid, password) # connect to an AP
-    wlan.ifconfig((IP, '255.255.255.0', '192.168.1.1', '8.8.8.8'))

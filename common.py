@@ -4,7 +4,7 @@ Created on Tue Aug  4 18:15:22 2020
 
 @author: alexander
 """
-import machine 
+import machine
 import ntptime
 
 class TIME() :
@@ -14,10 +14,12 @@ class TIME() :
         print('time UTC' + ':'.join([str(i) for i in self.rtc.datetime()[4:7]]))
     def now(self):
         return self.rtc.datetime()
-    def string(self, tz = 10): 
+    def string(self, tz = 10):
         hh, mm, ss = self.rtc.datetime()[4:7]
         hh = hh + tz if hh + 10 < 24 else hh + tz - 24
         return ':'.join([ ('' if len(str(i)) == 2 else '0') + str(i) for i in [hh, mm, ss]])
+    def api(self, value):
+        return self.string()
 
 class OBJECT (object):
     "basic empty object"

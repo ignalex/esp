@@ -1,4 +1,4 @@
-#dont call it http 
+#dont call it http
 
 import socket
 import json
@@ -18,14 +18,14 @@ def control(line):
             func, values = params[0], params[1:]
             if func in globals():
                 if str(globals()[func]).find('function') != -1:
-                    # function 
+                    # function
                     return (func, globals()[func](values)) # here can actually return dict which will be jsonified
                 elif str(globals()[func]).find('object') != -1:
                     # object
                     # has to have method 'api' accepting 1 array param
-                    try: 
+                    try:
                         return (func, globals()[func].api(values))
-                    except: 
+                    except:
                         return (func, 'object found but cant trigger .api(v)')
             else:
                 return (func, 'no funcion or object registered')
@@ -35,7 +35,7 @@ def control(line):
         return ('error', str(e))
 
 
-def loop(): 
+def loop():
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     s = socket.socket()
     #s.settimeout(None)
@@ -72,4 +72,5 @@ def loop():
                 pass
             print (str(e))
 
-loop()
+if __name__ == '__main__':
+    loop()

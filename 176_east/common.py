@@ -4,7 +4,7 @@ Created on Tue Aug  4 18:15:22 2020
 
 @author: alexander
 """
-import machine 
+import machine
 import ntptime
 
 class TIME() :

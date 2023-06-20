@@ -1,7 +1,9 @@
-#dont call it http
+"http://192.168.1.103/control/stop_thread"
+"http://192.168.1.103/control/stop_html"
 
 import socket
 import json
+import __main__ as m 
 
 html = """HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
@@ -14,26 +16,53 @@ def control(line):
         line = line.replace('\\r\\n','').replace(' HTTP','')
         if line.find('control') != -1:
             params = [i for i in line.replace('control','').split('/') if i not in ["b'GET ",'',"1.1'"]]
-            print ('control ' + str(params))
+            print ('control ' + str(params) + ' ', end = '')
+            # print ('GLOBALS \n' + str(globals()))
+            # print ('LOCALS \n' + str(locals()))
             func, values = params[0], params[1:]
-            if func in globals():
-                if str(globals()[func]).find('function') != -1:
+            if func in locals():
+                if str(locals()[func]).find('function') != -1:
                     # function
-                    return (func, globals()[func](values)) # here can actually return dict which will be jsonified
-                elif str(globals()[func]).find('object') != -1:
+                    return (func, locals()[func](values)) # here can actually return dict which will be jsonified
+                elif str(locals()[func]).find('object') != -1:
                     # object
-                    # has to have method 'api' accepting 1 array param
                     try:
-                        return (func, globals()[func].api(values))
+                        return (func, locals()[func].api(values))
                     except:
-                        return (func, 'object found but cant trigger .api(v)')
+                        return (func, 'object found in locals() but cant trigger .api(v)')
+            elif func in globals():
+                 if str(globals()[func]).find('function') != -1:
+                     # function
+                     return (func, globals()[func](values)) # here can actually return dict which will be jsonified
+                 elif str(globals()[func]).find('object') != -1:
+                     # object
+                     try:
+                         return (func, globals()[func].api(values))
+                     except:
+                         return (func, 'object found in globals() but cant trigger .api(v)')                   
             else:
-                return (func, 'no funcion or object registered')
+                return (func, 'no funcion or object registered in locals / globals')
         else:
             return (None,None)
     except Exception as e:
         return ('error', str(e))
 
+def check_functions(value=[]): 
+    "/control/check_functions"
+    print ('GLOBALS \n' + str(globals()))
+    print ('LOCALS \n' + str(locals()))
+    return {'locals': str(locals()), 'globals': str(globals())}
+    
+def stop_thread(value = []):
+    try: 
+        m.stop = True 
+    except: 
+        pass 
+    return 'stopping thread'
+
+def stop_http(value=[]): 
+    "exiting http loop"
+    return 'exiting http loop'
 
 def loop():
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
@@ -45,7 +74,9 @@ def loop():
 
     cnt = {}
     message = {}
+    
     while True:
+        # http control part
         try:
             cl, addr = s.accept()
             # print('client connected from', addr)
@@ -59,6 +90,8 @@ def loop():
                 func, reply = control(str(line))
                 if func is not None:
                     cnt[func] = reply
+                    print(reply)
+                if func == 'stop_http':  return  
             cl.sendall(html % json.dumps({ 'data':cnt, 'message' : message}))
             cl.close()
             cnt = {}
@@ -71,6 +104,6 @@ def loop():
             except:
                 pass
             print (str(e))
-
+            
 if __name__ == '__main__':
     loop()

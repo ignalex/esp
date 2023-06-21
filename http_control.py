@@ -64,7 +64,8 @@ def stop_http(value=[]):
     "exiting http loop"
     return 'exiting http loop'
 
-def loop():
+def loop(d = None):
+    "display integration"
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     s = socket.socket()
     #s.settimeout(None)
@@ -91,6 +92,9 @@ def loop():
                 if func is not None:
                     cnt[func] = reply
                     print(reply)
+                    if d is not None: 
+                        d.fill_rect(0, 30, 128, 10, 0)
+                        d.text(reply, 0, 30, 1)
                 if func == 'stop_http':  return  
             cl.sendall(html % json.dumps({ 'data':cnt, 'message' : message}))
             cl.close()

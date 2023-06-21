@@ -26,3 +26,32 @@ class OBJECT (object):
     def __init__(self,d={}):
         for k,v in d.items():
             setattr(self,k,v)
+            
+def are_you_alive(value):
+    return 'I am alive'
+
+def reset_yourself(value):
+    'reset machine'
+    print ('resetting')
+    machine.reset()
+
+# def cpu_freq(value = ['80']):
+#     "80 or 160"
+#     try:
+#         machine.freq(int(value[0])* 1000000 )
+#         return 'CPU changed to ' + str(machine.freq())
+#     except Exception as e:
+#         print (e)
+#         return str(e)
+
+# def deep_sleep(value = ['10']):
+#     'to use it, need to connect RST to D0'
+#     try:
+#         rtc = machine.RTC()
+#         rtc.irq(trigger=rtc.ALARM0, wake=machine.DEEPSLEEP)
+#         rtc.alarm(rtc.ALARM0, int(value[0]) * 1000)
+#         print('going to sleep for ' + str(value[0]) + ' sec')
+#         machine.deepsleep()
+#     except Exception as e:
+#         print (e)
+#         return str(e)

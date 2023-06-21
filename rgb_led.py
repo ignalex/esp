@@ -25,7 +25,7 @@ class RGB_LED():
                 m.states.RF_positions['color'] = rgb
                 m.states.previous_color = rgb
             except: pass
-            return 'color set to ' + rgb
+            return 'rgb ' + rgb
         except Exception as e:
             print (e)
             return str(e)

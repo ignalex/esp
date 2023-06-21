@@ -7,7 +7,7 @@ import secrets
 from oled import oled_spi
 import pins, config
 from temp_ds18b20 import DS18X20
-from common import TIME, OBJECT
+from common import TIME, OBJECT, are_you_alive, reset_yourself#, cpu_freq, deep_sleep
 from rgb_led import RGB_LED
 import gc
 from http_control import loop
@@ -51,17 +51,19 @@ states = OBJECT({'RF_positions' : {'color' :  'off',
 
 def run(): 
     "run cycle"
-    d.fill(0)
+    # d.fill(0)
     tmp, tmp_measured = temp.api()
-    d.text('temp ' + str(tmp), 0, 10, 1)
+    d.fill_rect(0, 10, 128, 10, 0); d.text('temp ' + str(tmp), 0, 10, 1)
     if tmp_measured:
         rgb.color('blue' if tmp != 0 else 'red')
-    d.text('time ' + tm.string(), 0, 20, 1)
+    d.fill_rect(0, 20, 128, 10, 0); d.text('time ' + tm.string(), 0, 20, 1)
     _g =  gc.mem_free()
+    d.fill_rect(0, 60, 128, 5, 0)
     d.fill_rect(0, 60, int(_g * 128 / gc_total) % 128, 5, 1)
     print('RAM ' + str(int(_g/1024)) + ' of ' + str(int(gc_total/1024))  + ', temp = ' + str(tmp) + (' * ' if tmp_measured else ''))
     d.show()
-    rgb.color('off')
+    if tmp_measured: 
+        rgb.color('off')
 
 
 def testThread():
@@ -73,6 +75,6 @@ def testThread():
     
 if __name__ == '__main__':
     _thread.start_new_thread(testThread, ())
-    loop()
+    loop(d)
     # test will be  http://192.168.1.103/rgb/blue
     # test          http://192.168.1.103/temp/0

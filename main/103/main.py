@@ -51,15 +51,23 @@ states = OBJECT({'RF_positions' : {'color' :  'off',
 
 def run(): 
     "run cycle"
-    # d.fill(0)
-    tmp, tmp_measured = temp.api()
+    # time 
+    now = tm.string()
+    if now.endswith('00'):
+        d.fill(0)    
+        
+    # temperature
+    tmp, tmp_measured = temp.apiTrue()
     d.fill_rect(0, 10, 128, 10, 0); d.text('temp ' + str(tmp), 0, 10, 1)
     if tmp_measured:
         rgb.color('blue' if tmp != 0 else 'red')
-    d.fill_rect(0, 20, 128, 10, 0); d.text('time ' + tm.string(), 0, 20, 1)
+    d.fill_rect(0, 20, 128, 10, 0); d.text('time ' + now, 0, 20, 1)
+    
+    # memory
     _g =  gc.mem_free()
     d.fill_rect(0, 60, 128, 5, 0)
     d.fill_rect(0, 60, int(_g * 128 / gc_total) % 128, 5, 1)
+    
     print('RAM ' + str(int(_g/1024)) + ' of ' + str(int(gc_total/1024))  + ', temp = ' + str(tmp) + (' * ' if tmp_measured else ''))
     d.show()
     if tmp_measured: 

@@ -91,10 +91,10 @@ def loop(d = None):
                 func, reply = control(str(line))
                 if func is not None:
                     cnt[func] = reply
-                    print(reply)
+                    print(str(reply))
                     if d is not None: 
                         d.fill_rect(0, 30, 128, 10, 0)
-                        d.text(reply, 0, 30, 1)
+                        d.text(str(reply), 0, 30, 1)
                 if func == 'stop_http':  return  
             cl.sendall(html % json.dumps({ 'data':cnt, 'message' : message}))
             cl.close()

@@ -38,7 +38,7 @@ class DS18X20():
         return round(sum([i for i in current])/self.attempts, 1)
     def api(self, value=[]):
         "massure real if value == [0] or buffered"
-        "return buffered N times, or re-measure (temp, read/skipped)"
+        "return buffered N times, or re-measure "
         if type(value) == list:
             if len(value) > 0:
                 if str(value[0]) == '0':
@@ -48,7 +48,12 @@ class DS18X20():
             self.last_reading = self.measure()
         else:
             self.skipped += 1
-        return self.last_reading, self.skipped == 0
+        return self.last_reading 
+    
+    def apiTrue(self, value=[]):
+        "return Temp, Skipped"
+        return [self.api(value), self.skipped == 0]
+
 
 if __name__ == '__main__':
     t = DS18X20()

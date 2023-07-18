@@ -63,4 +63,4 @@ DUST_A      = 34
 # +D34	34	!	Input only GPIO, cannot be configured as output, no pullup pulldown
 # D35	35	!	Input only GPIO, cannot be configured as output, no pullup pulldown
 # VP	36	!	Input only GPIO, cannot be configured as output, no pullup pulldown
-# VN	39	!	Input only GPIO, cannot be configured as output, no pullup pulldown
+# VN	39	!	Input only GPIO, cannot be configured as output, no pullup pulldownabs

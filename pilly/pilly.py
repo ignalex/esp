@@ -18,6 +18,15 @@
 
 # test
 
+# global positions 
+
+MAIN = False
+RETURN00 = False
+INITIALIZING = False
+WAIT = False
+
+
+
 def initialize(return_home = True):
     "on power on"
     "releys to allow"
@@ -25,33 +34,34 @@ def initialize(return_home = True):
 def start():
     "start at position"
     "reset irq for btns"
+    "turn MAIN on"
+    "start GoRight"
 
 def stop():
     "stop and wait"
+    global WAIT
+    WAIT = True
+    print(WAIT)
 
 def reset():
     "reset all"
 
 def return_to_zero():
-    "return to 0,0"
+    "set status RETURN"
+    "go Left"
+    "go Top"
 
-def go_step(direction):
-    "go"
+def onRight(s): 
+    "stop right"
+    "go down s sec"
+    "start go Left"
+    
+def onLeft(s):
+    "stop LEFT"
+    "go down s sec"
+    "start go RIGTH"    
 
-def go_direction_all_way(motor, direction, stop_main=True):
-    "motor all the way till btn interruption"
+def onDown(): 
+    "stop MAIN"
+    "return to 0 0"
 
-def main_motor():
-    "start stop logic"
-
-def on_left_limit(params):
-    "left btn"
-
-def on_right_limit(params):
-    "right btn"
-
-def go_down(ms):
-    "go down"
-
-def final_stop():
-    "stop all, go home"

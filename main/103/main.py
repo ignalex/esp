@@ -51,12 +51,14 @@ states = OBJECT({'RF_positions' : {'color' :  'off',
                  'previous_color' : 'off'})
 
 # BTN 
-def test1(x, status=False):
+def test1(x, status=True):
     print('test1 ' + str(x) + ' ' + str(status))
 
+def test1_release(x, status=False): 
+    print('test1 release ' + str(x) + ' ' + str(status))    
+
         
-    
-b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test1, min_ago = 2000, id = 'B1', d=d, pos=[0,30] )
+b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test1, release_callback=test1_release, min_ago = 2000, id = 'B1', d=d, pos=[0,30] )
 
 def run(): 
     "run cycle"

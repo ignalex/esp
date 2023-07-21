@@ -57,6 +57,20 @@ class Button2:
         if self.pressed: 
             self.pressed = False
             print(self.ID + ' released')
+            
+
+def wait_pin_change(pin, ms=20):
+    # wait for pin to change value
+    # it needs to be stable for a continuous 20ms
+    cur_value = pin.value()
+    active = 0
+    while active < ms:
+        if pin.value() != cur_value:
+            active += 1
+        else:
+            active = 0
+        time.sleep_ms(1)
+    return pin.value()
 
 
 

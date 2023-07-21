@@ -1,144 +1,75 @@
-from machine import Pin, Timer
+from machine import Pin
 import time
 
 class Button:
-    def __init__(self, pin, callback, trigger= Pin.IRQ_FALLING, min_ago=500, id = None):
+    def __init__(self, pin, callback, trigger= None, min_ago=500, id = None, d=None, pos=[0,30]):
         # Pin.IRQ_FALLING | IRQ_RISING
         self.callback = callback
         self.min_ago = min_ago
         self.ID = id
         self.counter = 0
         self.pressed = False
+        self.d = d
+        self.pos = pos 
 
         self._next_call = time.ticks_ms() #+ self.min_ago
 
-        pin.irq(trigger=trigger, handler=self.debounce_handler)
+        pin.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=self.debounce_handler)
 
     def call_callback(self, pin):
-        print('btn {} pressed'.format(self.ID))
-        self.counter += 1
-        self.callback(pin)
-
-    def debounce_handler(self, pin):
-        if time.ticks_ms() > self._next_call:
-            self._next_call = time.ticks_ms() + self.min_ago
-            self.call_callback(pin)
-        else:
-            print('btn {} bouncing - not processed'.format(self.ID))
-            
-class Button2:
-    def __init__(self, pin, callback, min_ago=500, id = None):
-        # Pin.IRQ_FALLING | IRQ_RISING
-        self.callback = callback
-        self.min_ago = min_ago
-        self.ID = id
-        self.counter = 0
-        self.pressed = False
-
-        self._next_call = time.ticks_ms() #+ self.min_ago
-
-        pin.irq(trigger=Pin.IRQ_FALLING, handler=self.debounce_handler)
-        pin.irq(trigger=Pin.IRQ_RISING,  handler=self.release_handler)
-
-    def call_callback(self, pin):
-        print('btn {} pressed'.format(self.ID))
         self.counter += 1
         self.pressed = True
-        self.callback(pin)
+        print(f'btn {self.ID} pressed, count {self.counter}')
+        if self.d is not None: 
+            self.d.text(self.ID, self.pos[0], self.pos[1], 1)
+            self.d.show()
+        self.callback(self.ID, self.pressed)
 
     def debounce_handler(self, pin):
-        if time.ticks_ms() > self._next_call and not self.pressed:
+        if time.ticks_ms() > self._next_call: 
             self._next_call = time.ticks_ms() + self.min_ago
-            self.call_callback(pin)
+            s = self.wait_pin_change(pin)
+            if s and not self.pressed: 
+                self.call_callback(pin)
+            elif s and self.pressed: 
+                pass 
+            elif not s and not self.pressed: 
+                pass 
+            else: 
+                self.release_handler(pin)
         else:
-            print('btn {} bouncing - not processed'.format(self.ID))            
-            
+            s = self.wait_pin_change(pin)
+            if not s and  self.pressed: 
+                self.release_handler(pin)
+
     def release_handler(self, pin):
         if self.pressed: 
             self.pressed = False
             print(self.ID + ' released')
+            if self.d is not None: 
+                self.d.fill_rect(self.pos[0], self.pos[1], 128, 10, 0) 
+                #!!!: change 128 
+                self.d.show()
             
-
-def wait_pin_change(pin, ms=20):
-    # wait for pin to change value
-    # it needs to be stable for a continuous 20ms
-    cur_value = pin.value()
-    active = 0
-    while active < ms:
-        if pin.value() != cur_value:
-            active += 1
-        else:
-            active = 0
-        time.sleep_ms(1)
-    return pin.value()
-
-
-
-def test(x):
-    print('test ' + str(x))
-    
-    
-class Switch():
-    """Switch Class
-
-    Class for defining a switch. Uses internal state to debounce switch in
-    software. To use switch, check the "new_value_available" member and the
-    "value" member from the application.
-    """
-    def __init__(self, pin, checks=3, check_period=100):
-        self.pin = pin
-        self.pin.irq(handler=self._switch_change,
-                     trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING)
-
-        self.debounce_timer = Timer(-1)
-        self.new_value_available = False
-        self.value = None
-        self.prev_value = None
-        self.debounce_checks = 0
-        self.checks = checks
-        self.check_period = check_period
-
-    def _switch_change(self, pin):
-        self.value = pin.value()
-
-        # Start timer to check for debounce
-        self.debounce_checks = 0
-        self._start_debounce_timer()
-
-        # Disable IRQs for GPIO pin while debouncing
-        self.pin.irq(trigger=0)
-
-    def _start_debounce_timer(self):
-        self.debounce_timer.init(period=self.check_period, mode=Timer.ONE_SHOT,
-                                 callback=self._check_debounce)
-
-    def _check_debounce(self, _):
-        new_value = self.pin.value()
-
-        if new_value == self.value:
-            self.debounce_checks = self.debounce_checks + 1
-
-            if self.debounce_checks == self.checks:
-                # Values are the same, debouncing done
-
-                # Check if this is actually a new value for the application
-                if self.prev_value != self.value:
-                    self.new_value_available = True
-                    self.prev_value = self.value
-
-                # Re-enable the Switch IRQ to get the next change
-                self.pin.irq(handler=self._switch_change,
-                             trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING)
+    def wait_pin_change(self, pin, ms=20):
+        # wait for pin to change value
+        # it needs to be stable for a continuous 20ms
+        cur_value = pin.value()
+        active = 0
+        while active < ms:
+            if pin.value() == cur_value:
+                active += 1
             else:
-                # Start the timer over to make sure debounce value stays the same
-                self._start_debounce_timer()
-        else:
-            # Values are not the same, update value we're checking for and
-            # delay again
-            self.debounce_checks = 0
-            self.value = new_value
-            self._start_debounce_timer()
-            
+                active = 0
+                cur_value = pin.value()
+            time.sleep_ms(1)
+        return not pin.value()
+
+
+def test(x, status=0):
+    print('test ' + str(x) + ' ' + str(status))
+    
             
 # import pins 
-# b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, min_ago = 2000, id = 'B1' )
+# b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, min_ago = 2000, id = 'B1', None, [0,0] )
+

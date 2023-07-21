@@ -2,7 +2,7 @@
 
 from esp_lib import wifi_connect #do_connect_with_display, failback
 from time import sleep
-from machine import reset
+from machine import reset, Pin
 import secrets
 from oled import oled_spi
 import pins, config
@@ -12,6 +12,7 @@ from rgb_led import RGB_LED
 import gc
 from http_control import loop
 import _thread
+from btn import Button
 
 print('103 ready')
 stop = False #thread 
@@ -48,6 +49,14 @@ if d is not None: d.fill(0); d.show()
 states = OBJECT({'RF_positions' : {'color' :  'off',
                                    'sensor' : 0},
                  'previous_color' : 'off'})
+
+# BTN 
+def test1(x, status=False):
+    print('test1 ' + str(x) + ' ' + str(status))
+
+        
+    
+b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test1, min_ago = 2000, id = 'B1', d=d, pos=[0,30] )
 
 def run(): 
     "run cycle"

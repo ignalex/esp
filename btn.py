@@ -15,9 +15,7 @@ class Button:
         self.d = d
         self.pos = pos 
         self.ms_wait = 20
-
         self._next_call = time.ticks_ms() #+ self.min_ago
-
         pin.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=self.debounce_handler)
 
     def call_callback(self, pin):
@@ -77,5 +75,5 @@ def test(x, status=0):
     
             
 # import pins 
-# b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, min_ago = 2000, id = 'B1', None, [0,0] )
+# b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, release_callback = None, min_ago = 2000, id = 'B1', None, [0,0] )
 

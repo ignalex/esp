@@ -16,15 +16,26 @@
 # tumblers
 #   LOGIC RELEY - logic power ESP, reley powers low voltage releys
 
-# test
 
-# global positions 
+class RELAY: 
+    self.
 
-MAIN = False
-RETURN00 = False
-INITIALIZING = False
-WAIT = False
-
+class PILLY:
+    def __init__(self, btns=None, relays=None): 
+        self.btn = btns
+        self.relay = relays
+        self.position = [None,None] #unknown
+        self.status = 'initializing'
+        
+    def initialize(self):
+        for r in self.relays: 
+            r.value(0)
+            
+        if self.position == [None, None]:
+            pass
+        
+        
+p = PILLY()
 
 
 def initialize(return_home = True):

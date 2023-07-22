@@ -1,4 +1,11 @@
-#from machine import Pin
+MOTOR_DELAY = 1
+
+
+try:
+    from machine import Pin
+except: 
+    print('no machine module available >> testing only')
+    
 from time import sleep 
 
 class OBJECT (object):
@@ -7,6 +14,7 @@ class OBJECT (object):
         for k,v in d.items():
             setattr(self,k,v)
 
+# simple 
 def relay(pin, state=1):
     "simple relay"
     r = Pin(pin, Pin.OUT, value=state)
@@ -16,13 +24,15 @@ def relay(pin, state=1):
 
 
 class RELAY: 
-    "simple relay"
+    "relay"
     def __init__(self, pin, name = 'relay', logic = 'high', debug = True): 
         self.pin = pin
         self.name = name
         self.logic = True if logic == 'high' else False
-        #self.r = Pin(pin, Pin.OUT, value=state)
-        self.r = OBJECT({'value':lambda x : x})
+        try: 
+            self.r = Pin(pin, Pin.OUT, value=state)
+        except: 
+            self.r = OBJECT({'value':lambda x : x})
         self.state = 0 if self.logic else 1
         self.debug = debug 
         #if state: self.on() #???
@@ -37,13 +47,15 @@ class RELAY:
 
 
 class MOTOR: 
-    def __init__(self, dir, motor, name, tags = ['<', '>']):
-        "dir, go - relays"
+    def __init__(self, dir, motor, name, tags = ['<', '>'], d = None, pos = [0,30]):
+        "dir, motor - relays"
         self.dir = dir
         self.motor = motor 
         self.name = name 
-        self.delay = 1
+        self.delay = MOTOR_DELAY
         self.tags = tags
+        self.d = d # display and text position 
+        self.pos = pos
         
     def go(self, dir = 0): 
         "go direction 0 / 1"
@@ -55,20 +67,26 @@ class MOTOR:
             sleep(self.delay)
         self.motor.on()
         print(f'{self.name} {self.tags[dir]}')
-        
+        if self.d is not None: 
+            self.d.text(f'{self.tags[dir]}', self.pos[0], self.pos[1], 1)
+            self.d.show()
+            
     def stop(self, reset_dir = False): 
         self.motor.off()
         if reset_dir: 
             self.dir.off()
         print(f'{self.name} X {"and reset" if reset_dir else ""}')
+        if self.d is not None: 
+            self.d.fill_rect(self.pos[0], self.pos[1], 10, 10, 0) # what is 1 symb width? 
+            self.d.show()
             
 if __name__ == '__main__':
-    r1 = RELAY(1, 'hor dir', debug = False)
-    r2 = RELAY(2, 'hor drive', debug = False)
-    m1 = MOTOR(r1,r2,'H')
+    r1 = RELAY(1, 'HORIZONTAL dir', debug = True)
+    r2 = RELAY(2, 'HORIZONTAL drive', debug = True)
+    m1 = MOTOR(r1,r2,'H', tags = ['<', '>'])
     
-    r3 = RELAY(3, 'ver dir', debug = False)
-    r4 = RELAY(4, 'ver drive', debug = False)
+    r3 = RELAY(3, 'VERTICAL dir', debug = False)
+    r4 = RELAY(4, 'VERTICAL drive', debug = False)
     m2 = MOTOR(r3,r4,'V', tags = ['^', 'v'])
     
     m3 = RELAY(3, 'main')

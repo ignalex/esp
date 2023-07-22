@@ -25,26 +25,51 @@ def relay(pin, state=1):
 
 class RELAY: 
     "relay"
-    def __init__(self, pin, name = 'relay', logic = 'high', debug = True): 
+    def __init__(self, pin, name = 'relay', logic = 'high', wait = {'on': 0, 'off': 0}, \
+            d = None, pos = [10, 0], tags = ['  ', 'R+'], \
+            debug = True): 
         self.pin = pin
         self.name = name
+        self.wait = wait # wait for cooling down 
         self.logic = True if logic == 'high' else False
         try: 
             self.r = Pin(pin, Pin.OUT, value=state)
         except: 
             self.r = OBJECT({'value':lambda x : x})
+            print(f'relay {self.name} testing only')
         self.state = 0 if self.logic else 1
         self.debug = debug 
         #if state: self.on() #???
+        self.d = d 
+        self.pos = pos 
+        self.tags = tags 
+        
     def on(self): 
         self.r.value(self.logic)
         self.state = True
         if self.debug: print(f'{self.name} set to ON')
+        self.display(1)
+        self.sleep(self.wait['on'])
+        
     def off(self):
         self.r.value(not self.logic)
         self.state = False
         if self.debug: print(f'{self.name} set to OFF')
-
+        self.display(0)
+        self.sleep(self.wait['off'])
+        
+    def sleep(self, x): 
+        if x != 0: 
+            if self.debug: print(f'waiting {x}', end='')
+            sleep(x)
+            if self.debug: print(' DONE')
+    
+    def display(self, id): 
+        if self.d is not None: 
+            self.fill()
+            self.d.fill_rect(self.pos[0], self.pos[1], len(self.tags[id]) * 10, 10, 0) 
+            self.d.text(self.tags[id], self.pos[0], self.tags[1], 1)
+            self.d.show()
 
 class MOTOR: 
     def __init__(self, dir, motor, name, tags = ['<', '>'], d = None, pos = [0,30]):
@@ -89,4 +114,4 @@ if __name__ == '__main__':
     r4 = RELAY(4, 'VERTICAL drive', debug = False)
     m2 = MOTOR(r3,r4,'V', tags = ['^', 'v'])
     
-    m3 = RELAY(3, 'main')
+    m3 = RELAY(3, 'main', wait = dict(on=1,off=1))

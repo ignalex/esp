@@ -17,13 +17,13 @@ def relay(pin, state=1):
 
 class RELAY: 
     "simple relay"
-    def __init__(self, pin, name = 'relay', state = 1, logic = 'high', debug = True): 
+    def __init__(self, pin, name = 'relay', logic = 'high', debug = True): 
         self.pin = pin
         self.name = name
         self.logic = True if logic == 'high' else False
         #self.r = Pin(pin, Pin.OUT, value=state)
         self.r = OBJECT({'value':lambda x : x})
-        self.state = state
+        self.state = 0 if self.logic else 1
         self.debug = debug 
         #if state: self.on() #???
     def on(self): 
@@ -46,6 +46,7 @@ class MOTOR:
         self.tags = tags
         
     def go(self, dir = 0): 
+        "go direction 0 / 1"
         if self.motor.state: 
             self.motor.off() # making sure no switch direction
             sleep(self.delay)
@@ -69,3 +70,5 @@ if __name__ == '__main__':
     r3 = RELAY(3, 'ver dir', debug = False)
     r4 = RELAY(4, 'ver drive', debug = False)
     m2 = MOTOR(r3,r4,'V', tags = ['^', 'v'])
+    
+    m3 = RELAY(3, 'main')

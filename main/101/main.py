@@ -41,7 +41,7 @@ real_time(d)
 
 sleep(0.5)
 
-relay
+r1 = relay(pins.R1, 1)
 r2 = relay(pins.R2, 1)
 r3 = relay(pins.R3, 1)
 r4 = relay(pins.R4, 1)

@@ -97,6 +97,18 @@ class PILLY:
     def bottom_released(self,x, status=0): 
         print('bottom released')   
         
+    def red(self,x, status=0): 
+        print('red pressed')
+
+    def red_released(self,x, status=0): 
+        print('red released')   
+                          
+    def black(self,x, status=0): 
+        print('black pressed')
+
+    def black_released(self,x, status=0): 
+        print('black released')   
+                                              
         
 def initialize(return_home = True):
     "on power on"
@@ -160,8 +172,11 @@ if __name__ == '__main__':
 
     b4 = Button(pin=Pin(pins.B4, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.bottom, release_callback = p.bottom_released, min_ago = 2000, id = 'BOTTOM', d = None, pos = [0,0] )
 
+    red = Button(pin=Pin(pins.B5, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.red, release_callback = p.red_released, min_ago = 2000, id = 'RED', d = None, pos = [0,0] )
 
-    p.btns([b1, b2, b3, b4])
+    black = Button(pin=Pin(pins.B6, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.black, release_callback = p.black_released, min_ago = 2000, id = 'BLACK', d = None, pos = [0,0] )
+
+    p.btns([b1, b2, b3, b4, red, black])
 
 
 

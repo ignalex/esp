@@ -42,7 +42,7 @@ class Button:
         try: 
             pin.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=self.debounce_handler)
         except: 
-            print('no irq registered > testing only')
+            print(f'{self.name} no irq registered > testing only')
             
     def call_callback(self, pin):
         self.counter += 1

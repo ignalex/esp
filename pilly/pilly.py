@@ -5,6 +5,8 @@
 import time
 import pins 
 
+class Object(object):
+    pass
 
 # for testing on non-esp 
 try: 
@@ -28,26 +30,27 @@ except:
     
 
 class PILLY:
-    def __init__(self, relays=[], d=None): 
+    def __init__(self, d=None): 
         "b, r - reserverd for [b1,...], [r1,..,m1...]"
-        "relays init on creation, btns > add later with callbacks"
+        "btns, relays > add when methods available (callbacks)"
         
         self.d = d # display 
-            
-        self.r = []
-        for r in relays: 
-            setattr(self,r.name,r)
-            self.r.append(r)
-        
         self.position = [None,None] #unknown
-        self.status = 'initializing'
-        self.initialize()
+        self.status = 'loading'
         
-    def btns(self, btns=[]): 
-        self.b = []
+    def hook_pereferials(self, btns=[], relays=[]): 
+        print()
+        print("adding btns")
+        
+        self.b = Object()
         for b in btns: 
-            setattr(self,b.name,b)
-            self.b.append(b) 
+            setattr(self.b, b.name, b)
+            #self.b.append(b) 
+        
+        print("adding relays")
+        self.r = Object()
+        for r in relays: 
+            setattr(self.r ,r.name, r)
             
     def display(self, text, pos): 
         if self.d is not None: 
@@ -57,14 +60,16 @@ class PILLY:
         print(text)
             
     def initialize(self):
-        for r in self.r: 
+        print('initializing')
+        self.status = 'initializing'
+        for k, r in self.r.__dict__.items(): 
             r.off()
             
         if self.position == [None, None]:
             self.return00()
             
         self.display('initialized', [0, 0])
-        
+        self.status = 'ready'
     
     def return00(self): 
         "return to 00 from unknown"    
@@ -109,44 +114,6 @@ class PILLY:
     def black_released(self,x, status=0): 
         print('black released')   
                                               
-        
-def initialize(return_home = True):
-    "on power on"
-    "releys to allow"
-
-def start():
-    "start at position"
-    "reset irq for btns"
-    "turn MAIN on"
-    "start GoRight"
-
-def stop():
-    "stop and wait"
-    global WAIT
-    WAIT = True
-    print(WAIT)
-
-def reset():
-    "reset all"
-
-def return_to_zero():
-    "set status RETURN"
-    "go Left"
-    "go Top"
-
-def onRight(s): 
-    "stop right"
-    "go down s sec"
-    "start go Left"
-    
-def onLeft(s):
-    "stop LEFT"
-    "go down s sec"
-    "start go RIGTH"    
-
-def onDown(): 
-    "stop MAIN"
-    "return to 0 0"
     
 if __name__ == '__main__': 
     from relay import RELAY, MOTOR
@@ -162,22 +129,36 @@ if __name__ == '__main__':
     
     m3 = RELAY(3, 'M', wait = dict(on=1,off=1))
     
-    p = PILLY(relays=[m1,m2,m3])
+    p = PILLY()
     
-    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.left, release_callback = p.left_released, min_ago = 2000, id = 'LEFT', d = None, pos = [0,0] )
+    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), \
+                callback=p.left, release_callback = p.left_released, min_ago = 2000, \
+                id = 'LEFT', d = None, pos = [0,0] )
 
-    b2 = Button(pin=Pin(pins.B2, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.right, release_callback = p.right_released, min_ago = 2000, id = 'RIGTH', d = None, pos = [0,0] )
+    b2 = Button(pin=Pin(pins.B2, mode=Pin.IN, pull=Pin.PULL_UP), \
+                callback=p.right, release_callback = p.right_released, min_ago = 2000, \
+                id = 'RIGTH', d = None, pos = [0,0] )
 
-    b3 = Button(pin=Pin(pins.B3, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.top, release_callback = p.top_released, min_ago = 2000, id = 'TOP', d = None, pos = [0,0] )
+    b3 = Button(pin=Pin(pins.B3, mode=Pin.IN, pull=Pin.PULL_UP), \
+                callback=p.top, release_callback = p.top_released, min_ago = 2000, \
+                id = 'TOP', d = None, pos = [0,0] )
 
-    b4 = Button(pin=Pin(pins.B4, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.bottom, release_callback = p.bottom_released, min_ago = 2000, id = 'BOTTOM', d = None, pos = [0,0] )
+    b4 = Button(pin=Pin(pins.B4, mode=Pin.IN, pull=Pin.PULL_UP), \
+                callback=p.bottom, release_callback = p.bottom_released, min_ago = 2000, 
+                id = 'BOTTOM', d = None, pos = [0,0] )
 
-    red = Button(pin=Pin(pins.B5, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.red, release_callback = p.red_released, min_ago = 2000, id = 'RED', d = None, pos = [0,0] )
+    red = Button(pin=Pin(pins.B5, mode=Pin.IN, pull=Pin.PULL_UP), \
+                callback=p.red, release_callback = p.red_released, min_ago = 2000, \
+                id = 'RED', d = None, pos = [0,0] )
 
-    black = Button(pin=Pin(pins.B6, mode=Pin.IN, pull=Pin.PULL_UP), callback=p.black, release_callback = p.black_released, min_ago = 2000, id = 'BLACK', d = None, pos = [0,0] )
+    black = Button(pin=Pin(pins.B6, mode=Pin.IN, pull=Pin.PULL_UP), \
+                callback=p.black, release_callback = p.black_released, min_ago = 2000, \
+                id = 'BLACK', d = None, pos = [0,0] )
 
-    p.btns([b1, b2, b3, b4, red, black])
-
+    p.hook_pereferials(btns=[b1, b2, b3, b4, red, black], \
+                       relays=[m1,m2,m3])
+             
+    p.initialize()
 
 
 

@@ -25,10 +25,11 @@ def relay(pin, state=1):
 
 class RELAY: 
     "relay"
-    def __init__(self, pin, name = 'relay', logic = 'high', wait = {'on': 0, 'off': 0}, \
+    def __init__(self, pin, name = 'relay', id='r1', logic = 'high', wait = {'on': 0, 'off': 0}, \
             d = None, pos = [10, 0], tags = ['  ', 'R+'], \
             debug = True): 
         self.pin = pin
+        self.id = id # must be unique for relays / motors 
         self.name = name
         self.wait = wait # wait for cooling down 
         self.logic = True if logic == 'high' else False
@@ -68,15 +69,16 @@ class RELAY:
         if self.d is not None: 
             self.fill()
             self.d.fill_rect(self.pos[0], self.pos[1], len(self.tags[id]) * 10, 10, 0) 
-            self.d.text(self.tags[id], self.pos[0], self.tags[1], 1)
+            self.d.text(self.tags[id], self.pos[0], self.pos[1], 1)
             self.d.show()
 
 class MOTOR: 
-    def __init__(self, dir, motor, name, tags = ['<', '>'], d = None, pos = [0,30]):
+    def __init__(self, dir, motor, name, id = 'm1', tags = ['<', '>'], d = None, pos = [0,30]):
         "dir, motor - relays"
         self.dir = dir
         self.motor = motor 
         self.name = name 
+        self.id = id # unuque for all motors 
         self.delay = MOTOR_DELAY
         self.tags = tags
         self.d = d # display and text position 

@@ -1,41 +1,45 @@
 # -*- coding: utf-8 -*-
-# motors
-#   M1 - main motor (* optionaly + starter)
-#   H  - horizontal motor (left / right)
-#       HR, HL
-#   V  - vertical motor (up / down)
-#       VU, VD
-#   R   - releys
 
-# control
-#   LEFT RIGHT TOP BOTTOM   - limit btns
-#   START STOP
-#   RELEYS  - powers on relays
-#   RESET   - all to start position
-
-# tumblers
-#   LOGIC RELEY - logic power ESP, reley powers low voltage releys
-
-
-class RELAY: 
-    self.
+#TODO: init class first, add relays, add btns (pass callbacks)
 
 class PILLY:
-    def __init__(self, btns=None, relays=None): 
-        self.btn = btns
-        self.relay = relays
+    def __init__(self, btns=[], relays=[], d=None): 
+        "b, r - reserverd for [b1,...], [r1,..,m1...]"
+        self.d = d # display 
+        self.b = []
+        for b in btns: 
+            setattr(self,b.name,b)
+            self.b.append(b)
+            
+        self.r = []
+        for r in relays: 
+            setattr(self,r.name,r)
+            self.r.append[r]
+        
         self.position = [None,None] #unknown
         self.status = 'initializing'
+        self.initialize()
         
+    def display(self, text, pos): 
+        if self.d is not None: 
+            self.d.fill_rect(self.pos[0], self.pos[1], len(text) * 10, 10, 0) 
+            self.d.text(text, self.pos[0], self.pos[1], 1)
+            self.d.show()
+        print(text)
+            
     def initialize(self):
-        for r in self.relays: 
-            r.value(0)
+        for r in self.r: 
+            r.off()
             
         if self.position == [None, None]:
-            pass
+            self.return00()
+            
+        self.display('initialized', [0, 0])
         
-        
-p = PILLY()
+    
+    def return00(self): 
+        "return to 00 from unknown"    
+        self.position = [0,0]
 
 
 def initialize(return_home = True):
@@ -75,4 +79,15 @@ def onLeft(s):
 def onDown(): 
     "stop MAIN"
     "return to 0 0"
+    
+if __name__ == '__main__': 
+    p = PILLY()
+
+
+
+
+
+
+
+
 

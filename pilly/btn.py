@@ -1,5 +1,6 @@
 import time
-import pins 
+import pins
+import config 
 
 
 # for testing on non-esp 
@@ -37,7 +38,7 @@ class Button:
         self.pressed = False
         self.d = d
         self.pos = pos 
-        self.ms_wait = 20
+        self.ms_wait = config.DEBOUNCE_MS
         self._next_call = time.ticks_ms() #+ self.min_ago
         try: 
             pin.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=self.debounce_handler)
@@ -49,6 +50,7 @@ class Button:
         self.pressed = True
         print(f'btn {self.ID} pressed, count {self.counter}')
         if self.d is not None: 
+            self.d.fill_rect(self.pos[0], self.pos[1], 8 * len(self.ID), 10, 0)
             self.d.text(self.ID, self.pos[0], self.pos[1], 1)
             self.d.show()
         self.callback(self.ID, self.pressed)
@@ -75,8 +77,7 @@ class Button:
             self.pressed = False
             print(self.ID + ' released')
             if self.d is not None: 
-                self.d.fill_rect(self.pos[0], self.pos[1], 128, 10, 0) 
-                #!!!: change 128 
+                self.d.fill_rect(self.pos[0], self.pos[1], 8 * len(self.ID), 10, 0) #!!!: check 
                 self.d.show()
             if self.release_callback is not None: 
                 self.release_callback(self.ID, self.pressed)
@@ -102,7 +103,7 @@ def test(x, status=0):
   
 if __name__ == '__main__': 
               
-    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, release_callback = None, min_ago = 2000, id = 'B1', d = None, pos = [0,0] )
+    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, release_callback = None, min_ago = config.WAIT_BETWEEN_PRESSED_MS, id = 'B1', d = None, pos = [0,0] )
 
 
 

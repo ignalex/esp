@@ -1,13 +1,12 @@
-MOTOR_DELAY = 1
-
+import config
+from time import sleep 
 
 try:
     from machine import Pin
 except: 
     print('no machine module available >> testing only')
     
-from time import sleep 
-
+# for running not on ESP 
 class OBJECT (object):
     "basic empty object"
     def __init__(self,d={}):
@@ -38,7 +37,7 @@ class RELAY:
         except: 
             self.r = OBJECT({'value':lambda x : x})
             print(f'relay {self.name} testing only')
-        self.state = 0 if self.logic else 1
+        self.state = False if self.logic else True
         self.debug = debug 
         #if state: self.on() #???
         self.d = d 
@@ -67,8 +66,7 @@ class RELAY:
     
     def display(self, id): 
         if self.d is not None: 
-            self.fill()
-            self.d.fill_rect(self.pos[0], self.pos[1], len(self.tags[id]) * 10, 10, 0) 
+            self.d.fill_rect(self.pos[0], self.pos[1], len(self.tags[id]) * 8, 10, 0) 
             self.d.text(self.tags[id], self.pos[0], self.pos[1], 1)
             self.d.show()
 
@@ -79,7 +77,7 @@ class MOTOR:
         self.motor = motor 
         self.name = name 
         self.id = id # unuque for all motors 
-        self.delay = MOTOR_DELAY
+        self.delay = config.MOTOR_DELAY
         self.tags = tags
         self.d = d # display and text position 
         self.pos = pos

@@ -85,7 +85,7 @@ class PILLY:
         self.move = 'return 00'
         self.r.V.go(0)
         # if locaiton is very down and M is off > can't start horizontal move
-        time.sleep(config.TIME_HORIZONTAL_DELAY_ON_RETURN_MS/1000)
+        time.sleep(config.TIME_HORIZONTAL_DELAY_ON_RETURN)
         self.r.H.go(0)
 
     def test(self, x, status=0):
@@ -104,10 +104,10 @@ class PILLY:
             if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
                 self.r.V.go(1) #go down
                 self.move = 'down'
-                time.sleep(config.TIME_GO_DOWN_LEFT_MS / 1000)
+                time.sleep(config.TIME_GO_DOWN_LEFT)
                 if self.status == 'working' and not self.b.BOTTOM.pressed: 
                     self.r.V.stop()
-                time.sleep(config.TIME_WAIT_BETWEEN_STEPS_MS / 1000)
+                time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
                 if self.status == 'working' and not self.b.BOTTOM.pressed:
                     self.move = 'right'
                     self.r.H.go(1) # start go left
@@ -129,10 +129,10 @@ class PILLY:
             if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
                 self.r.V.go(1) #go down
                 self.move = 'down'
-                time.sleep(config.TIME_GO_DOWN_RIGHT_MS / 1000)
+                time.sleep(config.TIME_GO_DOWN_RIGHT)
                 if self.status == 'working' and not self.b.BOTTOM.pressed: 
                     self.r.V.stop()
-                time.sleep(config.TIME_WAIT_BETWEEN_STEPS_MS / 1000)
+                time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
                 if self.status == 'working' and not self.b.BOTTOM.pressed:
                     self.move = 'left'
                     self.r.H.go(0) # start go left
@@ -185,7 +185,7 @@ class PILLY:
         elif self.status == 'stop': 
             self.display('cancelling', [0,0])
             self.status = 'cancelling'
-            time.sleep(config.TIME_CANCELLING_MS/1000)
+            time.sleep(config.TIME_CANCELLING)
             if self.status == 'cancelling': 
                 # nothing changed > go home
                 self.return00()
@@ -204,7 +204,7 @@ class PILLY:
             self.status = 'working'
             if not self.r.M.state: 
                 self.r.M.on()
-            time.sleep(config.TIME_WAIT_MAIN_MS/1000)
+            time.sleep(config.TIME_WAIT_MAIN)
             self.move = 'right'
             self.r.H.go(1)
             self.display('working', [0,0])
@@ -223,7 +223,6 @@ class PILLY:
         elif self.status in ('stop', 'cancelling'): 
             self.status = 'working'
             self.r.M.on()
-            time.sleep(config.TIME_WAIT_MAIN_MS/1000)
             if self.previous_move == 'right': 
                 self.r.H.go(1)
                 self.move = 'right'
@@ -251,14 +250,14 @@ class PILLY:
     
     def ready(self): 
         self.display('ready', [0, 0])
-        time.sleep(config.TIME_READY_MS/1000)
+        time.sleep(config.TIME_READY)
         self.status = 'ready'
     
     def finish(self): 
         self.status = 'finishing'
         self.display('finishing', [0, 0])
         self.r.M.off()
-        time.sleep(config.TIME_FINISH_MS / 1000)
+        time.sleep(config.TIME_FINISH)
         self.return00()
                                               
     
@@ -266,15 +265,21 @@ if __name__ == '__main__':
     from relay import RELAY, MOTOR
     from btn import Button
     
-    r1 = RELAY(1, 'HORIZONTAL dir', debug = config.DEBUG)
-    r2 = RELAY(2, 'HORIZONTAL drive', debug = config.DEBUG)
+    r1 = RELAY(pins.R1, 'HORIZONTAL dir', debug = config.DEBUG, \
+               wait = dict(on=config.TIME_WAIT_HDIR_ON, off=config.TIME_WAIT_HDIR_OFF))
+    r2 = RELAY(pins.R2, 'HORIZONTAL drive', debug = config.DEBUG, \
+               wait = dict(on=config.TIME_WAIT_HGO_ON, off=config.TIME_WAIT_HGO_OFF))
     m1 = MOTOR(r1,r2,'H', tags = ['<', '>'], d = None, pos = [0,3])
     
-    r3 = RELAY(3, 'VERTICAL dir', debug = config.DEBUG)
-    r4 = RELAY(4, 'VERTICAL drive', debug = config.DEBUG)
+    r3 = RELAY(pins.R3, 'VERTICAL dir', debug = config.DEBUG, \
+               wait = dict(on=config.TIME_WAIT_VDIR_ON, off=config.TIME_WAIT_VDIR_OFF))
+    r4 = RELAY(pins.R4, 'VERTICAL drive', debug = config.DEBUG, \
+               wait = dict(on=config.TIME_WAIT_VGO_ON, off=config.TIME_WAIT_VGO_OFF))
     m2 = MOTOR(r3,r4,'V', tags = ['^', 'v'], d = None, pos = [5,3])
     
-    m3 = RELAY(3, 'M', wait = dict(on=1,off=1), d = None, pos = [10, 3])
+    m3 = RELAY(pins.R5, 'M', \
+               wait = dict(on=config.TIME_WAIT_MAIN_ON, off=config.TIME_WAIT_MAIN_OFF), \
+               d = None, pos = [10, 3])
     
     p = PILLY()
     

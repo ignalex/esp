@@ -1,5 +1,5 @@
 MOTOR_DELAY = 0 #global > for motors - on top or delays for relays
-DEBUG = True
+DEBUG = False
 
 # btns
 DEBOUNCE_MS = 20

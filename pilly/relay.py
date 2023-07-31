@@ -32,12 +32,12 @@ class RELAY:
         self.name = name
         self.wait = wait # wait for cooling down 
         self.logic = True if logic == 'high' else False
+        self.state = False if self.logic else True
         try: 
-            self.r = Pin(pin, Pin.OUT, value=state)
+            self.r = Pin(pin, Pin.OUT, value=self.state)
         except: 
             self.r = OBJECT({'value':lambda x : x})
             print(f'relay {self.name} testing only')
-        self.state = False if self.logic else True
         self.debug = debug 
         #if state: self.on() #???
         self.d = d 

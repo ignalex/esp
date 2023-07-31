@@ -1,5 +1,8 @@
+HELLO = 'HELLO PILLY :)'
+WIFI_ATTEMPTS = 40
+
 MOTOR_DELAY = 0 #global > for motors - on top or delays for relays
-DEBUG = False
+DEBUG = True
 
 # btns
 DEBOUNCE_MS = 20
@@ -30,3 +33,6 @@ TIME_WAIT_VDIR_ON = 0
 TIME_WAIT_VDIR_OFF = 0
 TIME_WAIT_VGO_ON = 0.1
 TIME_WAIT_VGO_OFF = 0.1
+
+DUST = True
+SLEEP = 1 # main loop

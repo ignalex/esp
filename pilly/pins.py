@@ -14,6 +14,7 @@ OLED_DATA   = 4
 OLED_RESET  = 15
 # OLED_SELECT = 2 # try without > not needed
 OLED_SCK    = 14
+OLED_ROTATE = 180
 
 # BTNS
 B1          = 27

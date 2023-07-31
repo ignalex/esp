@@ -77,7 +77,7 @@ class Button:
             self.pressed = False
             print(self.ID + ' released')
             if self.d is not None: 
-                self.d.fill_rect(self.pos[0], self.pos[1], 8 * len(self.ID), 10, 0) #!!!: check 
+                self.d.fill_rect(self.pos[0], self.pos[1], 8 * 10, 10, 0) #!!!: check 
                 self.d.show()
             if self.release_callback is not None: 
                 self.release_callback(self.ID, self.pressed)

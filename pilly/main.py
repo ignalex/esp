@@ -35,49 +35,49 @@ try:
                wait = dict(on=config.TIME_WAIT_HDIR_ON, off=config.TIME_WAIT_HDIR_OFF))
     r2 = RELAY(pins.R2, 'HORIZONTAL drive', debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_HGO_ON, off=config.TIME_WAIT_HGO_OFF))
-    m1 = MOTOR(r1,r2,'H', tags = ['<', '>'], d = d, pos = [0,3])
+    m1 = MOTOR(r1,r2,'H', tags = ['<', '>'], d = d, pos = [0,30])
     
     r3 = RELAY(pins.R3, 'VERTICAL dir', debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_VDIR_ON, off=config.TIME_WAIT_VDIR_OFF))
     r4 = RELAY(pins.R4, 'VERTICAL drive', debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_VGO_ON, off=config.TIME_WAIT_VGO_OFF))
-    m2 = MOTOR(r3,r4,'V', tags = ['^', 'v'], d = d, pos = [5,3])
+    m2 = MOTOR(r3,r4,'V', tags = ['^', 'v'], d = d, pos = [5*8,30])
     
     m3 = RELAY(pins.R5, 'M', \
                wait = dict(on=config.TIME_WAIT_MAIN_ON, off=config.TIME_WAIT_MAIN_OFF), \
-               d = d, pos = [10, 3])
+               d = d, pos = [10*8, 30])
     
     p = PILLY()
     
     b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.left, release_callback = p.left_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'LEFT', d = d, pos = [0,1] )
+                id = 'LEFT', d = d, pos = [0,10] )
 
     b2 = Button(pin=Pin(pins.B2, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.right, release_callback = p.right_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'RIGTH', d = d, pos = [2,1] )
+                id = 'RIGTH', d = d, pos = [0,10] )
 
     b3 = Button(pin=Pin(pins.B3, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.top, release_callback = p.top_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'TOP', d = d, pos = [4,1] )
+                id = 'TOP', d = d, pos = [0,10] )
 
     b4 = Button(pin=Pin(pins.B4, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.bottom, release_callback = p.bottom_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, 
-                id = 'BOTTOM', d = d, pos = [6,1] )
+                id = 'BOTTOM', d = d, pos = [0,10] )
 
-    red = Button(pin=Pin(pins.B5, mode=Pin.IN, pull=Pin.PULL_UP), \
+    red = Button(pin=Pin(pins.B6, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.red, release_callback = p.red_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'RED', d = d, pos = [8,1] )
+                id = 'RED', d = d, pos = [0,10] )
 
-    black = Button(pin=Pin(pins.B6, mode=Pin.IN, pull=Pin.PULL_UP), \
+    black = Button(pin=Pin(pins.B5, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.black, release_callback = p.black_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'BLACK', d = d, pos = [10,1] )
+                id = 'BLACK', d = d, pos = [0,10] )
 
     p.hook_pereferials(btns=[b1, b2, b3, b4, red, black], \
                        relays=[m1,m2,m3])

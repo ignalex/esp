@@ -35,17 +35,17 @@ try:
                wait = dict(on=config.TIME_WAIT_HDIR_ON, off=config.TIME_WAIT_HDIR_OFF))
     r2 = RELAY(pins.R2, 'HORIZONTAL drive', debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_HGO_ON, off=config.TIME_WAIT_HGO_OFF))
-    m1 = MOTOR(r1,r2,'H', tags = ['<', '>'], d = d, pos = [0,30])
+    m1 = MOTOR(r1,r2,'H', tags = ['left', 'righ'], d = d, pos = [0,30])
     
     r3 = RELAY(pins.R3, 'VERTICAL dir', debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_VDIR_ON, off=config.TIME_WAIT_VDIR_OFF))
     r4 = RELAY(pins.R4, 'VERTICAL drive', debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_VGO_ON, off=config.TIME_WAIT_VGO_OFF))
-    m2 = MOTOR(r3,r4,'V', tags = ['^', 'v'], d = d, pos = [5*8,30])
+    m2 = MOTOR(r3,r4,'V', tags = ['up', 'down'], d = d, pos = [6*8,30])
     
     m3 = RELAY(pins.R5, 'M', \
                wait = dict(on=config.TIME_WAIT_MAIN_ON, off=config.TIME_WAIT_MAIN_OFF), \
-               d = d, pos = [10*8, 30])
+               tags = ['    ', 'MAIN'], d = d, pos = [12*8, 30])
     
     p = PILLY()
     

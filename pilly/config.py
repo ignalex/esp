@@ -34,5 +34,5 @@ TIME_WAIT_VDIR_OFF = 0
 TIME_WAIT_VGO_ON = 0.1
 TIME_WAIT_VGO_OFF = 0.1
 
-DUST = True
+DUST = False
 SLEEP = 1 # main loop

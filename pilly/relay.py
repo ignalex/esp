@@ -24,7 +24,7 @@ def relay(pin, state=1):
 
 class RELAY: 
     "relay"
-    def __init__(self, pin, name = 'relay', id='r1', logic = 'high', wait = {'on': 0, 'off': 0}, \
+    def __init__(self, pin, name = 'relay', id='r1', logic = 'low', wait = {'on': 0, 'off': 0}, \
             d = None, pos = [10, 0], tags = ['  ', 'R+'], \
             debug = True): 
         self.pin = pin

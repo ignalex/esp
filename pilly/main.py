@@ -93,7 +93,7 @@ while True:
     if a % 10 == 0 and config.DUST:
         dust_ = DUST(50)
         du = 'dst ' + str(round(dust_['density'], 1)) + ' [' + str(int(dust_['max_'])) + ']'
-        d.text(du,4,2 0,1)
+        d.text(du,4,20,1)
         d.show()
     a += 1
     if a == 100: a = 0

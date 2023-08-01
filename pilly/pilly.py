@@ -161,6 +161,8 @@ class PILLY:
         self.position[1] = 100
         
         if self.status == 'working': # and self.move == 'down':
+            self.r.LEFT.off()
+            self.r.RIGHT.off()
             self.finish()
 
     def bottom_released(self,x, status=0): 
@@ -180,7 +182,7 @@ class PILLY:
             self.r.LEFT.off()
             self.r.UP.off()
             self.r.DOWN.off()
-            self.display('stop', [0,0])
+            self.display('stop        ', [0,0])
             
          #if red after black (when stopped) > return to 00
         elif self.status == 'stop': 
@@ -192,7 +194,7 @@ class PILLY:
                 self.return_top()
         elif self.status == 'cancelling': 
             self.status = 'stop'
-            self.display('stop', [0,0])
+            self.display('stop        ', [0,0])
 
     def red_released(self,x, status=0): 
         self.print('red released')   
@@ -203,7 +205,7 @@ class PILLY:
         # when ready > start 
         if self.status == 'ready': 
             self.status = 'working'
-            self.display('working', [0,0])
+            self.display('working     ', [0,0])
             if not self.r.MAIN.state: 
                 self.r.MAIN.on()
             #time.sleep(config.TIME_WAIT_MAIN) 
@@ -217,7 +219,7 @@ class PILLY:
         # when working > stop H V but not M and wait 
         elif self.status == 'working': 
             self.status = 'stop'
-            self.display('stop', [0,0])
+            self.display('stop        ', [0,0])
             self.previous_move = self.move #preserving direction
             self.move = None
             self.r.MAIN.off()
@@ -231,12 +233,12 @@ class PILLY:
             self.status = 'working'
             self.r.MAIN.on()
             if self.previous_move == 'right': 
-                self.display('working', [0,0])
+                self.display('working     ', [0,0])
                 self.r.LEFT.off(); self.r.RIGHT.on() #self.r.H.go(1)
                 self.move = 'right'
                 
             elif self.previous_move == 'left': 
-                self.display('working', [0,0])
+                self.display('working     ', [0,0])
                 self.r.RIGHT.off(); self.r.LEFT.on() #self.r.H.go(0)
                 self.move = 'left'
                 
@@ -245,15 +247,15 @@ class PILLY:
                 if self.b.LEFT.pressed: 
                     self.r.RIGHT.on() #self.r.H.go(1)
                     self.move = 'right'
-                    self.display('working', [0,0])
+                    self.display('working    ', [0,0])
                 elif self.b.RIGHT.pressed: 
                     self.r.LEFT.on() #self.r.H.go(0)
                     self.move = 'left'
-                    self.display('working', [0,0])
+                    self.display('working    ', [0,0])
                 else: # default go right # right not pressed
                     self.r.RIGHT.on() 
                     self.move = 'right'
-                    self.display('working', [0,0])
+                    self.display('working    ', [0,0])
             elif self.previous_move == 'return 00': 
                 self.return_top()
             
@@ -262,13 +264,13 @@ class PILLY:
         self.print('black released')   
     
     def ready(self): 
-        self.display('ready', [0, 0])
+        self.display('ready        ', [0, 0])
         time.sleep(config.TIME_READY)
         self.status = 'ready'
     
     def finish(self): 
         self.status = 'finishing'
-        self.display('finishing', [0, 0])
+        self.display('finishing    ', [0, 0])
         self.r.MAIN.off()
         time.sleep(config.TIME_FINISH)
         self.return_top()

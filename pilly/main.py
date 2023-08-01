@@ -26,6 +26,8 @@ sleep(0.5)
 d.fill(0)
 d.show()
 
+d.text('initializing', 0,0,1)
+d.show()
 from pilly import PILLY
 from relay import RELAY
 from btn import Button

@@ -19,8 +19,8 @@ OLED_ROTATE = 180
 # BTNS
 B1          = 27
 B2          = 33
-B3          = 2
-B4          = 12 # boot fail if pulled high (btns are low logic => ok)
+B3          = 12
+B4          = 2 # boot fail if pulled high (btns are low logic => ok)
 B5          = 21
 B6          = 0
 

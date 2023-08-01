@@ -65,7 +65,7 @@ try:
     b2 = Button(pin=Pin(pins.B2, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.right, release_callback = p.right_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id 'B2', name = 'RIGHT', d = d, pos = [8*2,10], log=log)
+                id = 'B2', name = 'RIGHT', d = d, pos = [8*2,10], log=log)
 
     b3 = Button(pin=Pin(pins.B3, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.top, release_callback = p.top_released, \

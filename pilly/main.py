@@ -48,11 +48,11 @@ try:
                
     r4 = RELAY(pins.R4, name='DOWN', id='DOWN', debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_DOWN_ON, off=config.TIME_WAIT_DOWN_OFF), \
-               tags = ['   ', 'DWN'], d = d, pos = [12*8, 30], log=log)
+               tags = ['   ', 'DWN'], d = d, pos = [11*8, 30], log=log)
                
     r5 = RELAY(pins.R5, name='MAIN', id='MAIN',\
                wait = dict(on=config.TIME_WAIT_MAIN_ON, off=config.TIME_WAIT_MAIN_OFF), \
-               tags = ['    ', 'MAIN'], d = d, pos = [16*8, 30], log=log)
+               tags = [' ', 'M+'], d = d, pos = [14*8, 30], log=log)
     
     p = PILLY()
     

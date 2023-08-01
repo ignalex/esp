@@ -156,15 +156,15 @@ class PILLY:
         self.position[1] = 1
         
     def bottom(self,x, status=0): 
-        self.status = 'finishing'
         self.print('bottom pressed')
         self.r.DOWN.off() #self.r.V.stop()
         self.position[1] = 100
         if self.status == 'working': # and self.move == 'down':
+            self.status = 'finishing'
             self.r.LEFT.off()
             self.r.RIGHT.off()
             self.finish()
-
+            
     def bottom_released(self,x, status=0): 
         self.print('bottom released')   
         self.position[1] = 99

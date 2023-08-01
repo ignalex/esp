@@ -53,7 +53,7 @@ try:
                
     r5 = RELAY(pins.R5, name='MAIN', id='MAIN',debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_MAIN_ON, off=config.TIME_WAIT_MAIN_OFF), \
-               tags = ['   ', 'MAIN'], d = d, pos = [10*8, 20], log=log)
+               tags = ['    ', 'MAIN'], d = d, pos = [10*8, 20], log=log)
     
     p = PILLY(d = d, log=log)
     

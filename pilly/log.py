@@ -23,13 +23,13 @@ class LOG (object):
             for t in range(self.keep + 1, 0, -1): 
                 ft = 'log'+str(t)+'.txt'
                 fc = 'log'+str(t-1)+'.txt'
-                if os.path.exists(ft): 
+                if ft in os.listdir(): 
                     os.remove(ft)
                     print (f'{ft} removed')
-                if os.path.exists(fc):
+                if fc in os.listdir():
                     os.rename(fc,ft)
         def read(self): 
-            if os.path.exists('log0.txt'): 
+            if 'log0.txt' in os.listdir(): 
                 with open('log0.txt', 'r') as f: 
                     for l in f.readlines(): 
                         print(l)

@@ -100,7 +100,13 @@ class PILLY:
         
         if self.status == 'working' and self.move == 'left': 
             # normal cycle, left position
-            #if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
+            # step back 
+            if config.STEP_BACK: 
+                self.move = 'right'
+                self.r.RIGHT.on()
+                time.sleep(config.TIME_STEP_BACK)
+                self.r.RIGHT.off() 
+                
             self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
             self.move = 'down'
             time.sleep(config.TIME_GO_DOWN_LEFT)
@@ -125,7 +131,12 @@ class PILLY:
         
         if self.status == 'working' and self.move == 'right': 
             # normal cycle, right position
-            #if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
+            # step back 
+            if config.STEP_BACK: 
+                self.move = 'left'
+                self.r.LEFT.on()
+                time.sleep(config.TIME_STEP_BACK)
+                self.r.LEFT.off() 
             self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
             self.move = 'down'
             time.sleep(config.TIME_GO_DOWN_RIGHT)

@@ -106,14 +106,15 @@ class PILLY:
                 self.r.RIGHT.on()
                 time.sleep(config.TIME_STEP_BACK)
                 self.r.RIGHT.off() 
-                
+            
+            self.move = 'down'    
             self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
-            self.move = 'down'
+            
             time.sleep(config.TIME_GO_DOWN_LEFT)
-            if self.status == 'working' and self.move == 'left': #not self.b.BOTTOM.pressed: 
+            if self.status == 'working' and self.move == 'down': #not self.b.BOTTOM.pressed: 
                 self.r.DOWN.off() #self.r.V.stop()
             time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
-            if self.status == 'working' and self.move == 'left': #not self.b.BOTTOM.pressed:
+            if self.status == 'working' and self.move == 'down': #not self.b.BOTTOM.pressed:
                 self.move = 'right'
                 self.r.LEFT.off(); self.r.RIGHT.on() #self.r.H.go(1) # start go right
             #else: 
@@ -137,8 +138,9 @@ class PILLY:
                 self.r.LEFT.on()
                 time.sleep(config.TIME_STEP_BACK)
                 self.r.LEFT.off() 
-            self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
             self.move = 'down'
+            self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
+            
             time.sleep(config.TIME_GO_DOWN_RIGHT)
             if self.status == 'working' and self.move == 'down': #not self.b.BOTTOM.pressed: 
                 self.r.DOWN.off(); self.r.UP.off() #self.r.V.stop()

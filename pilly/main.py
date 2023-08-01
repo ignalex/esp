@@ -24,6 +24,7 @@ else:
 
 sleep(0.5)
 d.fill(0)
+d.show()
 
 from pilly import PILLY
 from relay import RELAY
@@ -50,11 +51,11 @@ try:
                wait = dict(on=config.TIME_WAIT_DOWN_ON, off=config.TIME_WAIT_DOWN_OFF), \
                tags = ['   ', 'DWN'], d = d, pos = [11*8, 30], log=log)
                
-    r5 = RELAY(pins.R5, name='MAIN', id='MAIN',\
+    r5 = RELAY(pins.R5, name='MAIN', id='MAIN',debug = config.DEBUG, \
                wait = dict(on=config.TIME_WAIT_MAIN_ON, off=config.TIME_WAIT_MAIN_OFF), \
-               tags = [' ', 'M+'], d = d, pos = [14*8, 30], log=log)
+               tags = ['   ', 'MAIN'], d = d, pos = [10*8, 20], log=log)
     
-    p = PILLY()
+    p = PILLY(d = d, log=log)
     
     b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.left, release_callback = p.left_released, \

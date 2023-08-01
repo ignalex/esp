@@ -139,15 +139,13 @@ class PILLY:
                 time.sleep(config.TIME_STEP_BACK)
                 self.r.LEFT.off() 
             self.move = 'down'
-            self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
+            self.r.DOWN.on() #self.r.V.go(1) #go down
             
             time.sleep(config.TIME_GO_DOWN_RIGHT)
-            if self.status == 'working' and self.move == 'down': #not self.b.BOTTOM.pressed: 
-                self.r.DOWN.off(); self.r.UP.off() #self.r.V.stop()
-            #time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
-            #if self.status == 'working' and self.move == 'down': #not self.b.BOTTOM.pressed:
+            self.r.DOWN.off()
+            if self.status == 'working' and self.move == 'down' and not self.b.BOTTOM.pressed:
                 self.move = 'left'
-                self.r.RIGHT.off(); self.r.LEFT.on() #self.r.H.go(0) # start go left
+                self.r.LEFT.on() #self.r.H.go(0) # start go left
             #else: 
                 # right and bottom > finish
              #   self.finish()

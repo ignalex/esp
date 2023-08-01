@@ -205,7 +205,7 @@ class PILLY:
             self.status = 'working'
             if not self.r.MAIN.state: 
                 self.r.MAIN.on()
-            time.sleep(config.TIME_WAIT_MAIN)
+            #time.sleep(config.TIME_WAIT_MAIN) 
             if not self.b.RIGHT.pressed: 
                 self.move = 'right'
                 self.r.LEFT.off(); self.r.RIGHT.on()#self.r.H.go(1)

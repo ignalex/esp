@@ -88,7 +88,7 @@ try:
                 id = 'BLACK', d = d, pos = [0,10], log=log)
 
     p.hook_pereferials(btns=[b1, b2, b3, b4, red, black], \
-                       relays=[m1,m2,m3])
+                       relays=[r1,r2,r3,r4,r5])
              
     p.initialize()
     

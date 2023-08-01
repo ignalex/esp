@@ -100,19 +100,19 @@ class PILLY:
         
         if self.status == 'working' and self.move == 'left': 
             # normal cycle, left position
-            if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
-                self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
-                self.move = 'down'
-                time.sleep(config.TIME_GO_DOWN_LEFT)
-                if self.status == 'working' and not self.b.BOTTOM.pressed: 
-                    self.r.DOWN.off() #self.r.V.stop()
-                time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
-                if self.status == 'working' and not self.b.BOTTOM.pressed:
-                    self.move = 'right'
-                    self.r.LEFT.off(); self.r.RIGHT.on() #self.r.H.go(1) # start go right
-            else: 
+            #if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
+            self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
+            self.move = 'down'
+            time.sleep(config.TIME_GO_DOWN_LEFT)
+            if self.status == 'working' and self.move == 'left': #not self.b.BOTTOM.pressed: 
+                self.r.DOWN.off() #self.r.V.stop()
+            time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
+            if self.status == 'working' and self.move == 'left': #not self.b.BOTTOM.pressed:
+                self.move = 'right'
+                self.r.LEFT.off(); self.r.RIGHT.on() #self.r.H.go(1) # start go right
+            #else: 
                 # right and bottom > finish
-                self.finish()
+               # self.finish()
         
     def left_released(self,x, status=0): 
         self.print('left released')
@@ -125,19 +125,19 @@ class PILLY:
         
         if self.status == 'working' and self.move == 'right': 
             # normal cycle, right position
-            if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
-                self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
-                self.move = 'down'
-                time.sleep(config.TIME_GO_DOWN_RIGHT)
-                if self.status == 'working' and not self.b.BOTTOM.pressed: 
-                    self.r.DOWN.off(); self.r.UP.off() #self.r.V.stop()
-                time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
-                if self.status == 'working' and not self.b.BOTTOM.pressed:
-                    self.move = 'left'
-                    self.r.RIGHT.off(); self.r.LEFT.on() #self.r.H.go(0) # start go left
-            else: 
+            #if not self.b.BOTTOM.pressed: #!!!: what if status changed in between ? 
+            self.r.UP.off(); self.r.DOWN.on() #self.r.V.go(1) #go down
+            self.move = 'down'
+            time.sleep(config.TIME_GO_DOWN_RIGHT)
+            if self.status == 'working' and self.move == 'down': #not self.b.BOTTOM.pressed: 
+                self.r.DOWN.off(); self.r.UP.off() #self.r.V.stop()
+            time.sleep(config.TIME_WAIT_BETWEEN_STEPS)
+            if self.status == 'working' and self.move == 'down': #not self.b.BOTTOM.pressed:
+                self.move = 'left'
+                self.r.RIGHT.off(); self.r.LEFT.on() #self.r.H.go(0) # start go left
+            #else: 
                 # right and bottom > finish
-                self.finish()
+             #   self.finish()
 
     def right_released(self,x, status=0): 
         self.print('right released')

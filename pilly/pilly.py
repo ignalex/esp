@@ -61,8 +61,8 @@ class PILLY:
             
     def display(self, text, pos): 
         if self.d is not None: 
-            self.d.fill_rect(self.pos[0], self.pos[1], len(text) * 8, 10, 0) 
-            self.d.text(text, self.pos[0], self.pos[1], 1)
+            self.d.fill_rect(pos[0], pos[1], len(text) * 8, 10, 0) 
+            self.d.text(text, pos[0], pos[1], 1)
             self.d.show()
         self.print(text)
             

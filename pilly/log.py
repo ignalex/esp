@@ -13,9 +13,11 @@ class LOG (object):
             
         def __call__(self, *args, **kargs): 
             if len(args)>=1: 
-                print(args[0]) 
-                with open(self.name,'a') as f: 
-                    f.write(str(time.time()).split('.')[0] + ' ' + args[0] + '\n')
+                print(args[0])
+                if self.log:  
+                    with open(self.name,'a') as f: 
+                        f.write(str(time.time()).split('.')[0] + ' ' + args[0] + '\n')
+                    f.close()
                     
         def check_files(self): 
             for t in range(self.keep + 1, 0, -1): 
@@ -28,8 +30,11 @@ class LOG (object):
                     os.rename(fc,ft)
         def read(self): 
             if os.path.exists('log0.txt'): 
-                for f in open('log0.txt', 'r').readlines(): 
-                    print(f)
+                with open('log0.txt', 'r') as f: 
+                    for l in f.readlines(): 
+                        print(l)
+                f.close()
                 
-        
-lg = LOG()
+if __name__ == '__main__':         
+    lg = LOG(log=False)
+    #lg('test1')

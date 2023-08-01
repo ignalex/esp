@@ -2,6 +2,7 @@ import time
 import pins
 import config 
 
+from log import LOG
 
 # for testing on non-esp 
 try: 
@@ -25,7 +26,7 @@ except:
 
 
 class Button:
-    def __init__(self, pin, callback, release_callback = None, min_ago=1000, id = None, d=None, pos=[0,30]):
+    def __init__(self, pin, callback, release_callback = None, min_ago=1000, id = None, d=None, pos=[0,30], debug=False, log=print):
         "btn with callback and release callback" 
         "debouncing stable 20ms, skip too soon second press"
         "display integration"
@@ -40,15 +41,17 @@ class Button:
         self.pos = pos 
         self.ms_wait = config.DEBOUNCE_MS
         self._next_call = time.ticks_ms() #+ self.min_ago
+        self.print = log
+        self.debug = debug
         try: 
             pin.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=self.debounce_handler)
         except: 
-            print(f'{self.name} no irq registered > testing only')
+            self.print(f'{self.name} no irq registered > testing only')
             
     def call_callback(self, pin):
         self.counter += 1
         self.pressed = True
-        print(f'btn {self.ID} pressed, count {self.counter}')
+        if self.debug: self.print(f'btn {self.ID} pressed, count {self.counter}')
         if self.d is not None: 
             self.d.fill_rect(self.pos[0], self.pos[1], 8 * len(self.ID), 10, 0)
             self.d.text(self.ID, self.pos[0], self.pos[1], 1)
@@ -75,7 +78,7 @@ class Button:
     def release_handler(self, pin):
         if self.pressed: 
             self.pressed = False
-            print(self.ID + ' released')
+            if self.debug: self.print(self.ID + ' released')
             if self.d is not None: 
                 self.d.fill_rect(self.pos[0], self.pos[1], 8 * 10, 10, 0) #!!!: check 
                 self.d.show()
@@ -102,8 +105,8 @@ def test(x, status=0):
     
   
 if __name__ == '__main__': 
-              
-    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, release_callback = None, min_ago = config.WAIT_BETWEEN_PRESSED_MS, id = 'B1', d = None, pos = [0,0] )
+    log = LOG(True)
+    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, release_callback = None, min_ago = config.WAIT_BETWEEN_PRESSED_MS, id = 'B1', d = None, pos = [0,0], log=log, debug=True)
 
 
 

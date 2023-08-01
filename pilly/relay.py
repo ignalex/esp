@@ -1,5 +1,6 @@
 import config
 from time import sleep 
+from log import LOG
 
 try:
     from machine import Pin
@@ -26,18 +27,19 @@ class RELAY:
     "relay"
     def __init__(self, pin, name = 'relay', id='r1', logic = 'low', wait = {'on': 0, 'off': 0}, \
             d = None, pos = [10, 0], tags = ['  ', 'R+'], \
-            debug = True): 
+            debug = True, log=print): 
         self.pin = pin
         self.id = id # must be unique for relays / motors 
         self.name = name
         self.wait = wait # wait for cooling down 
         self.logic = True if logic == 'high' else False
         self.state = False if self.logic else True
+        self.print = log 
         try: 
             self.r = Pin(pin, Pin.OUT, value=self.state)
         except: 
             self.r = OBJECT({'value':lambda x : x})
-            print(f'relay {self.name} testing only')
+            self.print(f'relay {self.name} testing only')
         self.debug = debug 
         #if state: self.on() #???
         self.d = d 
@@ -47,24 +49,25 @@ class RELAY:
     def on(self): 
         self.r.value(self.logic)
         self.state = True
-        if self.debug: print(f'{self.name} set to ON')
+        if self.debug: self.print(f'{self.name} set to ON')
         self.display(1)
         self.sleep(self.wait['on'])
         
     def off(self):
         self.r.value(not self.logic)
         self.state = False
-        if self.debug: print(f'{self.name} set to OFF')
+        if self.debug: self.print(f'{self.name} set to OFF')
         self.display(0)
         self.sleep(self.wait['off'])
         
     def sleep(self, x): 
         if x != 0: 
-            if self.debug: print(f'waiting {x}', end='')
+            if self.debug: self.print(f'waiting {x}', end='')
             sleep(x)
-            if self.debug: print(' DONE')
+            if self.debug: self.print(' DONE')
     
     def display(self, id): 
+        #display tag[id]
         if self.d is not None: 
             self.d.fill_rect(self.pos[0], self.pos[1], len(self.tags[id]) * 8, 10, 0) 
             self.d.text(self.tags[id], self.pos[0], self.pos[1], 1)
@@ -108,7 +111,8 @@ class MOTOR:
         self.stop(reset_dir = reset_dir)
             
 if __name__ == '__main__':
-    r1 = RELAY(1, 'HORIZONTAL dir', debug = True)
+    log = LOG(log=True)
+    r1 = RELAY(1, 'HORIZONTAL dir', debug = True, log=log)
     r2 = RELAY(2, 'HORIZONTAL drive', debug = True)
     m1 = MOTOR(r1,r2,'H', tags = ['<', '>'])
     

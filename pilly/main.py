@@ -60,32 +60,32 @@ try:
     b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.left, release_callback = p.left_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'LEFT', d = d, pos = [0,10], log=log)
+                id = 'B1', name = 'LEFT', d = d, pos = [0,10], log=log)
 
     b2 = Button(pin=Pin(pins.B2, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.right, release_callback = p.right_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'RIGHT', d = d, pos = [0,10], log=log)
+                id 'B2', name = 'RIGHT', d = d, pos = [8*2,10], log=log)
 
     b3 = Button(pin=Pin(pins.B3, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.top, release_callback = p.top_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'TOP', d = d, pos = [0,10], log=log)
+                id = 'B3', name = 'TOP', d = d, pos = [8*4,10], log=log)
 
     b4 = Button(pin=Pin(pins.B4, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.bottom, release_callback = p.bottom_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, 
-                id = 'BOTTOM', d = d, pos = [0,10], log=log)
+                id = 'B4', name='BOTTOM', d = d, pos = [8*6,10], log=log)
 
     red = Button(pin=Pin(pins.B6, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.red, release_callback = p.red_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'RED', d = d, pos = [0,10], log=log)
+                id = 'B5', name='RED', d = d, pos = [8*8,10], log=log)
 
     black = Button(pin=Pin(pins.B5, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.black, release_callback = p.black_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'BLACK', d = d, pos = [0,10], log=log)
+                id = 'B6', name ='BLACK', d = d, pos = [8*10,10], log=log)
 
     p.hook_pereferials(btns=[b1, b2, b3, b4, red, black], \
                        relays=[r1,r2,r3,r4,r5])

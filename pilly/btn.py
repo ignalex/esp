@@ -26,7 +26,7 @@ except:
 
 
 class Button:
-    def __init__(self, pin, callback, release_callback = None, min_ago=1000, id = None, d=None, pos=[0,30], debug=False, log=print):
+    def __init__(self, pin, callback, release_callback = None, min_ago=1000, id = None, name = 'BTN', d=None, pos=[0,30], debug=False, log=print):
         "btn with callback and release callback" 
         "debouncing stable 20ms, skip too soon second press"
         "display integration"
@@ -34,7 +34,7 @@ class Button:
         self.release_callback = release_callback
         self.min_ago = min_ago
         self.ID = id
-        self.name = id # compat
+        self.name = name
         self.counter = 0
         self.pressed = False
         self.d = d
@@ -106,7 +106,7 @@ def test(x, status=0):
   
 if __name__ == '__main__': 
     log = LOG(True)
-    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, release_callback = None, min_ago = config.WAIT_BETWEEN_PRESSED_MS, id = 'B1', d = None, pos = [0,0], log=log, debug=True)
+    b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), callback=test, release_callback = None, min_ago = config.WAIT_BETWEEN_PRESSED_MS, id = 'B1', name = 'LEFT', d = None, pos = [0,0], log=log, debug=True)
 
 
 

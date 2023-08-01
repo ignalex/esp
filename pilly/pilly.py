@@ -70,7 +70,7 @@ class PILLY:
         self.print('initializing')
         self.status = 'initializing'
         for k, r in self.r.__dict__.items(): 
-            r.off()
+            pass #r.off()
             
         if self.position == [None, None]: 
             if config.ON_START_RETURN00:
@@ -160,7 +160,7 @@ class PILLY:
         self.r.DOWN.off() #self.r.V.stop()
         self.position[1] = 100
         
-        if self.status == 'working' and self.move == 'down':
+        if self.status == 'working': # and self.move == 'down':
             self.finish()
 
     def bottom_released(self,x, status=0): 
@@ -203,6 +203,7 @@ class PILLY:
         # when ready > start 
         if self.status == 'ready': 
             self.status = 'working'
+            self.display('working', [0,0])
             if not self.r.MAIN.state: 
                 self.r.MAIN.on()
             #time.sleep(config.TIME_WAIT_MAIN) 
@@ -212,11 +213,11 @@ class PILLY:
             else: 
                 self.move = 'left'
                 self.r.RIGHT.off(); self.r.LEFT.on()
-            self.display('working', [0,0])
             
         # when working > stop H V but not M and wait 
         elif self.status == 'working': 
             self.status = 'stop'
+            self.display('stop', [0,0])
             self.previous_move = self.move #preserving direction
             self.move = None
             self.r.MAIN.off()
@@ -224,20 +225,21 @@ class PILLY:
             self.r.DOWN.off()
             self.r.LEFT.off()
             self.r.RIGHT.off()
-            self.display('stop', [0,0])
             
         # second press when stopped - resume same direction
         elif self.status in ('stop', 'cancelling'): 
             self.status = 'working'
             self.r.MAIN.on()
             if self.previous_move == 'right': 
+                self.display('working', [0,0])
                 self.r.LEFT.off(); self.r.RIGHT.on() #self.r.H.go(1)
                 self.move = 'right'
-                self.display('working', [0,0])
+                
             elif self.previous_move == 'left': 
+                self.display('working', [0,0])
                 self.r.RIGHT.off(); self.r.LEFT.on() #self.r.H.go(0)
                 self.move = 'left'
-                self.display('working', [0,0])
+                
             elif self.previous_move == 'down': 
                 # do not go more down 
                 if self.b.LEFT.pressed: 
@@ -304,32 +306,32 @@ if __name__ == '__main__':
     b1 = Button(pin=Pin(pins.B1, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.left, release_callback = p.left_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'LEFT', d = None, pos = [0,1], log=log)
+                id = 'B1', name = 'LEFT', d = None, pos = [0,1], log=log)
 
     b2 = Button(pin=Pin(pins.B2, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.right, release_callback = p.right_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'RIGHT', d = None, pos = [2,1], log=log )
+                id = 'B2', name = 'RIGHT', d = None, pos = [2,1], log=log )
 
     b3 = Button(pin=Pin(pins.B3, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.top, release_callback = p.top_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'TOP', d = None, pos = [4,1], log=log )
+                id = 'B3', name = 'TOP', d = None, pos = [4,1], log=log )
 
     b4 = Button(pin=Pin(pins.B4, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.bottom, release_callback = p.bottom_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, 
-                id = 'BOTTOM', d = None, pos = [6,1], log=log )
+                id = 'B4', name='BOTTOM', d = None, pos = [6,1], log=log )
 
     red = Button(pin=Pin(pins.B5, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.red, release_callback = p.red_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'RED', d = None, pos = [8,1], log=log )
+                id = 'B5', name='RED', d = None, pos = [8,1], log=log )
 
     black = Button(pin=Pin(pins.B6, mode=Pin.IN, pull=Pin.PULL_UP), \
                 callback=p.black, release_callback = p.black_released, \
                 min_ago = config.WAIT_BETWEEN_PRESSED_MS, \
-                id = 'BLACK', d = None, pos = [10,1], log=log )
+                id = 'B6', name = 'BLACK', d = None, pos = [10,1], log=log )
 
     p.hook_pereferials(btns=[b1, b2, b3, b4, red, black], \
                        relays=[r1,r2,r3,r4,r5])
